@@ -400,11 +400,12 @@ public class MainActivity extends AppCompatActivity {
             return newPoints;
         }
 
+
         newPoints = Resample(points, 64);
+        drawView2.drawShape(newPoints);
         newPoints = RotateToZero(newPoints);
         newPoints = ScaleToSquare(newPoints, 400);
         newPoints = TranslateToOrigin(newPoints);
-        drawView2.drawShape(newPoints);
         return newPoints;
     }
 
@@ -938,6 +939,13 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
             nameNull.setTitle("提示" ) ;
             nameNull.setMessage("手势名称不可以为空" ) ;
+            nameNull.setPositiveButton("是" ,  null );
+            nameNull.show();
+        }
+        else if(name.equals("not found")){
+            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+            nameNull.setTitle("提示" ) ;
+            nameNull.setMessage("手势名称非法" ) ;
             nameNull.setPositiveButton("是" ,  null );
             nameNull.show();
         }
