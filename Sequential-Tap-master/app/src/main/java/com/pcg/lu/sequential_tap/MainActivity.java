@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     boolean isTesting = false;
-    int testTime = 20;
+    int testTime = 50;
     int testNum = 0;
     int rightCaseNum = 0;
     int wrongCaseNum = 0;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     long usedTime;
 
     boolean isTesting_s = false;
-    int testTime_s = 20;
+    int testTime_s = 50;
     int testNum_s = 0;
     int rightCaseNum_s = 0;
     int wrongCaseNum_s = 0;
@@ -874,20 +874,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public ArrayList<QTouch> clearDiffer(ArrayList<QTouch> qtouches){
-        for(int i = 0; i < qtouchs_copy.size(); i++){
-            System.out.println("heeeere "+ "clearDiffer    before qtouchs_copy" + i +":(order,index)");
-            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
-            System.out.println("(t0,t1)" + qtouchs_copy.get(i).t0+","+qtouchs_copy.get(i).t1);
-        }
-//        Collections.sort(qtouchs_copy, new Comparator<QTouch>() {
-//            public int compare(QTouch lhs, QTouch rhs) {
-//                                 if ( lhs.t0 > rhs.t0 ) {
-//                                        return 1;
-//                                   } else {
-//                                       return -1;
-//                                  }
-//                            }
-//         });
+//        for(int i = 0; i < qtouchs_copy.size(); i++){
+//            System.out.println("heeeere "+ "clearDiffer    before qtouchs_copy" + i +":(order,index)");
+//            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
+//            System.out.println("(t0,t1)" + qtouchs_copy.get(i).t0+","+qtouchs_copy.get(i).t1);
+//        }
+        Collections.sort(qtouchs_copy, new Comparator<QTouch>() {
+            public int compare(QTouch lhs, QTouch rhs) {
+                                 if ( lhs.t0 > rhs.t0 ) {
+                                        return 1;
+                                   } else {
+                                       return -1;
+                                  }
+                            }
+         });
 //        for(int i = 0; i < qtouchs_copy.size(); i++){
 //            System.out.println("heeeere "+ "clearDiffer    sort qtouchs_copy" + i +":(order,index)");
 //            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
@@ -915,11 +915,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        for(int i = 0; i < qtouchs_copy.size(); i++){
-            System.out.println("heeeere "+ "clearDiffer    after qtouchs_copy" + i +":(order,index)");
-            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
-            System.out.println("(t0,t1)" + qtouchs_copy.get(i).t0+","+qtouchs_copy.get(i).t1);
-        }
+        Collections.sort(qtouchs_copy, new Comparator<QTouch>() {
+            public int compare(QTouch lhs, QTouch rhs) {
+                if ( lhs.index > rhs.index ) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+//        for(int i = 0; i < qtouchs_copy.size(); i++){
+//            System.out.println("heeeere "+ "clearDiffer    after qtouchs_copy" + i +":(order,index)");
+//            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
+//            System.out.println("(t0,t1)" + qtouchs_copy.get(i).t0+","+qtouchs_copy.get(i).t1);
+//        }
         return qtouches;
     }
 
