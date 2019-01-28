@@ -235,15 +235,15 @@ public class MainActivity extends AppCompatActivity {
                                         wrongCaseNum = wrongCaseNum + 1;
                                     }
                                     testNum = testNum + 1;
-                                    System.out.println("heeeere "+testNum);
+                                   // System.out.println("heeeere "+testNum);
                                     if(testNum == testTime){
-                                        System.out.println("heeeere testNum=testTime");
+                                        //System.out.println("heeeere testNum=testTime");
                                         endTime = System.currentTimeMillis();
                                         usedTime = endTime-startTime;
                                         isTesting = false;
                                         testNum = 0;
                                         startTest.setEnabled(true);
-                                        System.out.println("heeeere before the dialog");
+                                        //System.out.println("heeeere before the dialog");
                                         AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
                                         nameNull.setTitle("测试已完成" ) ;
                                         nameNull.setMessage("用时"+usedTime+"ms\n"+"正确率"+(double)rightCaseNum/(rightCaseNum+wrongCaseNum) ) ;
@@ -290,15 +290,15 @@ public class MainActivity extends AppCompatActivity {
                             wrongCaseNum_s = wrongCaseNum_s + 1;
                         }
                         testNum_s = testNum_s + 1;
-                        System.out.println("heeeere "+testNum_s);
+                        //System.out.println("heeeere "+testNum_s);
                         if(testNum_s == testTime_s){
-                            System.out.println("heeeere testNum_s=testTime_s");
+                            //System.out.println("heeeere testNum_s=testTime_s");
                             endTime_s = System.currentTimeMillis();
                             usedTime_s = endTime_s-startTime_s;
                             isTesting_s = false;
                             testNum_s = 0;
                             startTest_s.setEnabled(true);
-                            System.out.println("heeeere before the dialog");
+                            //System.out.println("heeeere before the dialog");
                             AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
                             nameNull.setTitle("测试已完成" ) ;
                             nameNull.setMessage("用时"+usedTime_s+"ms\n"+"正确率"+(double)rightCaseNum_s/(rightCaseNum_s+wrongCaseNum_s) ) ;
@@ -318,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String CompareCandi_s(){
+        System.out.println("heeeere"+"comparecandi_s");
         boolean isFound = false;
 //        for(int i = 0; i < candidates_s.size(); i++){
 //            for(int j = 0; j < candidates_s.get(i).touchs.size(); j++){
@@ -353,13 +354,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 isFound = true;
                 if(candidates_s.get(i).touchs.get(j).size() == qtouchs_copy.size()){
-                    for(int k = 0; k < qtouchs_copy.size(); k++){
+                    for(int k = 0; k < qtouchs_copy.size()-1; k++){
                         System.out.println(candidates_s.get(i).touchs.get(j).get(k).index);
                         System.out.println(qtouchs_copy.get(k).index);
                         System.out.println(candidates_s.get(i).touchs.get(j).get(k).order);
                         System.out.println(qtouchs_copy.get(k).order);
+
                         if(candidates_s.get(i).touchs.get(j).get(k).index == qtouchs_copy.get(k).index
-                                && candidates_s.get(i).touchs.get(j).get(k).order == qtouchs_copy.get(k).order){
+                                && candidates_s.get(i).touchs.get(j).get(k).order == qtouchs_copy.get(k).order
+                                && AbsoluteVal((Math.pow(candidates_s.get(i).touchs.get(j).get(k).x - candidates_s.get(i).touchs.get(j).get(k+1).x, 2) + Math.pow(candidates_s.get(i).touchs.get(j).get(k).y - candidates_s.get(i).touchs.get(j).get(k+1).y, 2)),
+                                (Math.pow(qtouchs_copy.get(k).x - qtouchs_copy.get(k+1).x, 2) + Math.pow(qtouchs_copy.get(k).y - qtouchs_copy.get(k+1).y, 2)),
+                                200000) ){
                             System.out.println(candidates_s.size());
                             System.out.println(candidates_s.get(i).touchs.get(j).size());
                             System.out.println(isFound);
@@ -369,6 +374,14 @@ public class MainActivity extends AppCompatActivity {
                             isFound = false;
                             break;
                         }
+                    }
+                    if(candidates_s.get(i).touchs.get(j).get(qtouchs_copy.size()-1).index == qtouchs_copy.get(qtouchs_copy.size()-1).index
+                            && candidates_s.get(i).touchs.get(j).get(qtouchs_copy.size()-1).order == qtouchs_copy.get(qtouchs_copy.size()-1).order){
+                        // 最后的点的index和order
+                    }
+                    else{
+                        isFound = false;
+                        continue;
                     }
                 }
                 else {
@@ -386,6 +399,18 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    public boolean AbsoluteVal(double vala, double valb, double absolute){
+        System.out.println("heeeere a:"+vala+" b:"+valb+" a-b:"+(vala-valb));
+        if((vala - valb > 0) && vala - valb < absolute ){
+            return true;
+        }
+        else if((vala - valb < 0) && vala -valb > -absolute){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     public ArrayList<Point> SetUpCandi(ArrayList<Point>points){
 
         ArrayList<Point> newPoints = new ArrayList();
@@ -895,8 +920,8 @@ public class MainActivity extends AppCompatActivity {
 //            System.out.println("(t0,t1)" + qtouchs_copy.get(i).t0+","+qtouchs_copy.get(i).t1);
 //        }
         for(int i = 0; i < qtouches.size()-1; i++){
-            if((qtouches.get(i).t0 - qtouches.get(i+1).t0 < 50 && qtouches.get(i).t0 - qtouches.get(i+1).t0 > 0) || (qtouches.get(i).t0 - qtouches.get(i+1).t0 > -50 && qtouches.get(i).t0 - qtouches.get(i+1).t0 < 0)){
-                System.out.println("heeeere "+ "change order here1");
+            if(AbsoluteVal(qtouches.get(i).t0,qtouches.get(i+1).t0,50)) {
+                //System.out.println("heeeere "+ "change order here1");
                 if(qtouches.get(i).order < qtouches.get(i+1).order){
                     qtouches.get(i+1).order = qtouches.get(i).order;
                 }
@@ -906,8 +931,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         for(int i = qtouches.size()-1 ; i > 0; i--){
-            if((qtouches.get(i).t0 - qtouches.get(i-1).t0 < 50 && qtouches.get(i).t0 - qtouches.get(i-1).t0 > 0) || (qtouches.get(i).t0 - qtouches.get(i-1).t0 > -50 && qtouches.get(i).t0 - qtouches.get(i-1).t0 < 0)){
-                System.out.println("heeeere "+ "change order here2");
+            if(AbsoluteVal(qtouches.get(i).t0,qtouches.get(i-1).t0,50)){
+                //System.out.println("heeeere "+ "change order here2");
                 if(qtouches.get(i).order < qtouches.get(i-1).order){
                     qtouches.get(i-1).order = qtouches.get(i).order;
                 }
