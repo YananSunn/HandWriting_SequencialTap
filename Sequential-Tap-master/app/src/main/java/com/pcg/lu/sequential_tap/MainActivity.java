@@ -6,13 +6,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Random;
@@ -23,21 +27,28 @@ public class MainActivity extends AppCompatActivity {
     public final static int VIEW_GESTURE = 1;
 
     public final static int GESTURE_SETUP = 2;
-    public final static int GESTURE_TEST = 3;
+    public final static int GESTURE_LEARN = 3;
+    public final static int GESTURE_TEST = 4;
 
-    public final static int SEQUENTIAL_SETUP = 4;
-    public final static int SEQUENTIAL_TEST = 5;
+    public final static int SEQUENTIAL_SETUP = 5;
+    public final static int SEQUENTIAL_LEARN = 6;
+    public final static int SEQUENTIAL_TEST = 7;
 
     DrawView drawView;
     DrawView drawView2;
+    DrawFlash drawFlash;
     TextView view;
     Button changeState;
     Button save;
     EditText edit;
     TextView view_s;
-    Button changeState_s;
+//    Button changeState_s;
     Button save_s;
     EditText edit_s;
+
+    Spinner mySpinner_s;
+    List<String> list_s = new ArrayList<String>();
+    ArrayAdapter<String> adapter_s;
 
     TextView gestureName;
     Button startTest;
@@ -81,13 +92,47 @@ public class MainActivity extends AppCompatActivity {
 
     public void initialFindViews(){
         view_s = (TextView)findViewById(R.id.textView_s);
-        changeState_s = (Button)findViewById(R.id.button1_s);
+//        changeState_s = (Button)findViewById(R.id.button1_s);
         save_s = (Button)findViewById(R.id.button2_s);
         edit_s = (EditText)findViewById(R.id.editText_s);
         sequentialName = (TextView)findViewById(R.id.sequential_name);
         startTest_s = (Button)findViewById(R.id.start_test_s);
+
+
         sequentialName.setVisibility(View.GONE);
         startTest_s.setVisibility(View.GONE);
+
+        mySpinner_s = (Spinner)findViewById(R.id.spinner);
+        list_s.add("初始设置");
+        list_s.add("学习模式");
+        list_s.add("测试模式");
+        adapter_s = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_s);
+        adapter_s.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mySpinner_s.setAdapter(adapter_s);
+
+        mySpinner_s.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int arg2, long arg3) {
+                /* 将所选mySpinner 的值带入myTextView 中 */
+                switch (arg2){
+                    case 0:
+                        state_s = SEQUENTIAL_SETUP;
+                        break;
+                    case 1:
+                        state_s = SEQUENTIAL_LEARN;
+                        break;
+                    case 2:
+                        state_s = SEQUENTIAL_TEST;
+                        break;
+                }
+                StateOnChange_s();
+            }
+
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        });
+
     }
 
     void onChangeView(int target) {
@@ -100,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
                 //drawView.setBackgroundColor(Color.BLACK);
                 //drawView.setAlpha(0.5f);
                 layout.addView(drawView);
+                drawFlash = new DrawFlash(this);
+                layout.addView(drawFlash);
                 break;
             case VIEW_GESTURE:
                 setContentView(R.layout.gesture);
@@ -116,6 +163,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Point> qmoves = new ArrayList();
     ArrayList<Candidate> candidates = new ArrayList();
     ArrayList<Candidate_s> candidates_s = new ArrayList();
+
+    ArrayList<QTap> qtaps = new ArrayList();
+
 
     Timer idleTimer = null;
 
@@ -742,7 +792,7 @@ public class MainActivity extends AppCompatActivity {
             case VIEW_GESTURE:
                 onChangeView(VIEW_SEQUENTIAL);
                 view_s = (TextView)findViewById(R.id.textView_s);
-                changeState_s = (Button)findViewById(R.id.button1_s);
+//                changeState_s = (Button)findViewById(R.id.button1_s);
                 save_s = (Button)findViewById(R.id.button2_s);
                 edit_s = (EditText)findViewById(R.id.editText_s);
                 sequentialName = (TextView)findViewById(R.id.sequential_name);
@@ -778,26 +828,44 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void StateOnChange_s(View v){
+    public void StateOnChange_s(){
         switch (state_s) {
-            case SEQUENTIAL_SETUP:
-                state_s = SEQUENTIAL_TEST;
-                changeState_s.setText("TEST");
+            case SEQUENTIAL_TEST:
+//                state_s = SEQUENTIAL_TEST;
+//                changeState_s.setText("TEST");
                 edit_s.setVisibility(View.GONE);
                 save_s.setVisibility(View.GONE);
                 view_s.setVisibility(View.VISIBLE);
                 sequentialName.setVisibility(View.VISIBLE);
                 startTest_s.setVisibility(View.VISIBLE);
                 break;
-            case SEQUENTIAL_TEST:
-                state_s = SEQUENTIAL_SETUP;
-                changeState_s.setText("SETUP");
+            case SEQUENTIAL_SETUP:
+//                state_s = SEQUENTIAL_SETUP;
+//                changeState_s.setText("SETUP");
                 edit_s.setVisibility(View.VISIBLE);
                 save_s.setVisibility(View.VISIBLE);
                 view_s.setVisibility(View.GONE);
                 sequentialName.setVisibility(View.GONE);
                 startTest_s.setVisibility(View.GONE);
                 break;
+            case SEQUENTIAL_LEARN:
+                edit_s.setVisibility(View.GONE);
+                save_s.setVisibility(View.GONE);
+                view_s.setVisibility(View.GONE);
+                sequentialName.setVisibility(View.GONE);
+                startTest_s.setVisibility(View.GONE);
+
+                qtaps.add(new QTap(1,1,true));
+                qtaps.add(new QTap(1,1,false));
+                qtaps.add(new QTap(1,1,true));
+                qtaps.add(new QTap(1,1,false));
+                qtaps.add(new QTap(2,2,true));
+                qtaps.add(new QTap(3,3,true));
+
+                qtaps.add(new QTap(2,5,false));
+                qtaps.add(new QTap(3,6,false));
+
+                drawFlash.drawTapFlash(qtaps);
         }
     }
 

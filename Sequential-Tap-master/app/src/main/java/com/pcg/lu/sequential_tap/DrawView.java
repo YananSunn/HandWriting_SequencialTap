@@ -67,7 +67,6 @@ class DrawView extends View {
             Point m_point = qmoves.get(i);
             canvas.drawCircle(m_point.x , m_point.y - 250, 10, p_blue);
         }
-
         invalidate();
     }
 }
