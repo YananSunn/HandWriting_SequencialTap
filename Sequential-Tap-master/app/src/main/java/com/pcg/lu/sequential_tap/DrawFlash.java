@@ -210,6 +210,13 @@ public class DrawFlash extends View {
 
     }
 
+
+    void drawNothing(){
+        bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        invalidate();
+    }
+
     void drawShape(ArrayList<Point> qmoves) {
         bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
