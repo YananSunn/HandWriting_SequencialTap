@@ -77,14 +77,16 @@
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="上一个" />
+                android:text="上一个"
+                android:onClick="LastClicked_s"/>
 
             <Button
                 android:id="@+id/setup_next_s"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="下一个" />
+                android:text="下一个"
+                android:onClick="NextClicked_s"/>
         </LinearLayout>
 
         <LinearLayout

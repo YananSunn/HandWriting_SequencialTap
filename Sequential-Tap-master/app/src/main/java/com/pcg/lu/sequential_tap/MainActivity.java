@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     final int seqSize = 2;
     int setupNumber = 0;
-    int learnNumber = 0;
+    int learnNumber = 1;
     boolean isTesting_s = false;
     final int testTime_s = 50;
     int testNum_s = 0;
@@ -137,15 +137,15 @@ public class MainActivity extends AppCompatActivity {
         qSequentials[0].qTaps.add(new QTap(1,1,false));
         qSequentials[0].qTaps.add(new QTap(1,1,true));
         qSequentials[0].qTaps.add(new QTap(1,1,false));
-        qSequentials[0].qTaps.add(new QTap(2,2,true));
-        qSequentials[0].qTaps.add(new QTap(3,3,true));
-        qSequentials[0].qTaps.add(new QTap(2,5,false));
-        qSequentials[0].qTaps.add(new QTap(3,6,false));
+//        qSequentials[0].qTaps.add(new QTap(2,2,true));
+//        qSequentials[0].qTaps.add(new QTap(3,3,true));
+//        qSequentials[0].qTaps.add(new QTap(2,5,false));
+//        qSequentials[0].qTaps.add(new QTap(3,6,false));
 
-        qSequentials[1].qTaps.add(new QTap(2,1,true));
-        qSequentials[1].qTaps.add(new QTap(3,2,true));
-        qSequentials[1].qTaps.add(new QTap(2,3,false));
-        qSequentials[1].qTaps.add(new QTap(3,4,false));
+        qSequentials[1].qTaps.add(new QTap(0,1,true));
+        qSequentials[1].qTaps.add(new QTap(4,2,true));
+        qSequentials[1].qTaps.add(new QTap(0,3,false));
+        qSequentials[1].qTaps.add(new QTap(4,4,false));
 
         qSequentials[0].tapName = "打开微信";
         qSequentials[1].tapName = "调整音量";
@@ -415,7 +415,12 @@ public class MainActivity extends AppCompatActivity {
                 learnNext_s.setVisibility(View.GONE);
                 testTip_s.setVisibility(View.GONE);
                 testStart_s.setVisibility(View.GONE);
-                drawFlash.drawNothing();
+
+                drawFlash.runnable.isDrawing = true;
+                drawFlash.drawTapFlash(qSequentials[setupNumber].qTaps);
+
+                modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
+                setupTip_s.setText(qSequentials[setupNumber].tapName);
                 break;
 
             case SEQUENTIAL_LEARN:
@@ -430,7 +435,8 @@ public class MainActivity extends AppCompatActivity {
                 testTip_s.setVisibility(View.GONE);
                 testStart_s.setVisibility(View.GONE);
 
-                drawFlash.drawTapFlash(qSequentials[0].qTaps);
+                drawFlash.runnable.isDrawing = true;
+                drawFlash.drawTapFlash(qSequentials[learnNumber].qTaps);
                 break;
             case SEQUENTIAL_TEST:
                 setupTip_s.setVisibility(View.GONE);
@@ -444,9 +450,52 @@ public class MainActivity extends AppCompatActivity {
                 testTip_s.setVisibility(View.VISIBLE);
                 testStart_s.setVisibility(View.VISIBLE);
 
+                drawFlash.runnable.isDrawing = false;
                 drawFlash.drawNothing();
                 break;
         }
+    }
+
+    public void NextClicked_s(View v){
+        if(state_s == SEQUENTIAL_SETUP){
+            setupNumber = setupNumber + 1;
+            if(setupNumber >= seqSize){
+                setupNumber = 0;
+            }
+        }
+        else if(state_s == SEQUENTIAL_LEARN){
+            learnNumber = learnNumber + 1;
+            if(learnNumber >= seqSize){
+                learnNumber = 0;
+            }
+        }
+
+//        drawFlash.runnable.isDrawing = false;
+//        drawFlash.drawNothing();
+//        drawFlash.runnable.isDrawing = true;
+        drawFlash.drawTapFlash(qSequentials[setupNumber].qTaps);
+        modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
+        setupTip_s.setText(qSequentials[setupNumber].tapName);
+    }
+
+    public void LastClicked_s(View v){
+        if(state_s == SEQUENTIAL_SETUP){
+            setupNumber = setupNumber - 1;
+            if(setupNumber < 0){
+                setupNumber = seqSize - 1;
+            }
+        }
+        else if(state_s == SEQUENTIAL_LEARN){
+            learnNumber = learnNumber - 1;
+            if(learnNumber < 0){
+                learnNumber = seqSize - 1;
+            }
+        }
+//
+//        drawFlash.runnable.isDrawing = false;
+//        drawFlash.drawNothing();
+//        drawFlash.runnable.isDrawing = true;
+//        drawFlash.drawTapFlash(qSequentials[learnNumber].qTaps);
     }
 
     // 敲击计时
@@ -797,7 +846,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    
+
 
     // gesture相关函数
 
