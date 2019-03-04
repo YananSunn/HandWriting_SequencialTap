@@ -23,23 +23,51 @@ public class DrawFlash extends View {
     Canvas canvas = null;
 
     private static Handler handler=new Handler();
-    public ArrayList<QTap> qtaps;
 
-    int tapSize = qtaps.size();
+    final int seqSize = 2;
+    QSequential[] qSequentials = new QSequential[seqSize];
+
     final long seqInterval = 300;
     final long synInterval = 15;
     Paint p_red = new Paint();
     Paint p_blue = new Paint();
 
-    MyRunnable runnable = new MyRunnable();
+    MyRunnable runnable = new MyRunnable(0);
+    public Thread thread;
 
-    public DrawFlash(Context context) {
+    public DrawFlash(Context context, QSequential[] qSequentials) {
         super(context);
         p_red.setColor(Color.RED);
         p_red.setStrokeWidth(10);
         p_blue.setColor(Color.BLUE);
-    }
 
+        for(int i = 0; i < seqSize; i++){
+            this.qSequentials[i] = new QSequential();
+        }
+        initialQSequential();
+    }
+    public void initialQSequential(){
+        for(int i = 0; i < seqSize; i++){
+            qSequentials[i] = new QSequential();
+        }
+
+        qSequentials[0].qTaps.add(new QTap(1,1,true));
+        qSequentials[0].qTaps.add(new QTap(1,1,false));
+        qSequentials[0].qTaps.add(new QTap(1,1,true));
+        qSequentials[0].qTaps.add(new QTap(1,1,false));
+//        qSequentials[0].qTaps.add(new QTap(2,2,true));
+//        qSequentials[0].qTaps.add(new QTap(3,3,true));
+//        qSequentials[0].qTaps.add(new QTap(2,5,false));
+//        qSequentials[0].qTaps.add(new QTap(3,6,false));
+
+        qSequentials[1].qTaps.add(new QTap(0,1,true));
+        qSequentials[1].qTaps.add(new QTap(4,2,true));
+        qSequentials[1].qTaps.add(new QTap(0,3,false));
+        qSequentials[1].qTaps.add(new QTap(4,4,false));
+
+        qSequentials[0].tapName = "打开微信";
+        qSequentials[1].tapName = "调整音量";
+    }
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -47,159 +75,177 @@ public class DrawFlash extends View {
     }
 
     public class MyRunnable implements Runnable {
+        int seqNum;
         public boolean isDrawing = false;
+
+        public MyRunnable(int seqNum){
+            this.seqNum = seqNum;
+        }
+        public void setSeqNum(int seqNum){
+            this.seqNum = seqNum;
+        }
+
         public void run() {
             int counter = 0;
             boolean synchron = false;
-            while (isDrawing) {
-                if(counter == qtaps.size() - 1 || counter == qtaps.size()){
-                    // 顺序绘制
-                    synchron = false;
+            while (counter < qSequentials[seqNum].qTaps.size()) {
+                if(Thread.currentThread().isInterrupted())
+                {
+                    System.out.println("heeeere in isinterrupt()");
+                    break;
                 }
-                else if(qtaps.get(counter).order != qtaps.get(counter + 1).order){
-                    // 顺序绘制
-                    synchron = false;
-                }
-                else{
-                    // 同时绘制
-                    synchron = true;
-                }
-                System.out.println("heeeere in the while");
-                System.out.println("heeeere"+"synchron:" + synchron);
-                System.out.println("heeeere"+"counter:"+counter);
-                System.out.println("heeeere"+"qtaps.get(counter).index:"+qtaps.get(counter).index);
-                try {
-                    Thread.sleep(seqInterval);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                // 开始绘制
-
-                if(qtaps.get(counter).direction){
-                    switch (qtaps.get(counter).index){
-                        case 0:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[0], fingerY[0], 50, p_red);
-                                    System.out.println("heeeere"+"已经将第0个触点绘制为红色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                        case 1:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[1], fingerY[1], 50, p_red);
-                                    System.out.println("heeeere"+"已经将第1个触点绘制为红色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                        case 2:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[2], fingerY[2], 50, p_red);
-                                    System.out.println("heeeere"+"已经将第2个触点绘制为红色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                        case 3:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[3], fingerY[3], 50, p_red);
-                                    System.out.println("heeeere"+"已经将第3个触点绘制为红色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                        case 4:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[4], fingerY[4], 50, p_red);
-                                    System.out.println("heeeere"+"已经将第4个触点绘制为红色");
-                                    invalidate();
-                                }
-                            });
-                            break;
+                else
+                {
+                    if(counter == qSequentials[seqNum].qTaps.size() - 1 || counter == qSequentials[seqNum].qTaps.size()){
+                        // 顺序绘制
+                        synchron = false;
                     }
-
-                }
-                else{
-                    switch (qtaps.get(counter).index){
-                        case 0:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[0], fingerY[0], 50, p_blue);
-                                    System.out.println("heeeere"+"已经将第0个触点绘制为蓝色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                        case 1:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[1], fingerY[1], 50, p_blue);
-                                    System.out.println("heeeere"+"已经将第1个触点绘制为蓝色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                        case 2:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[2], fingerY[2], 50, p_blue);
-                                    System.out.println("heeeere"+"已经将第2个触点绘制为蓝色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                        case 3:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[3], fingerY[3], 50, p_blue);
-                                    System.out.println("heeeere"+"已经将第3个触点绘制为蓝色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                        case 4:
-                            handler.post(new Runnable(){
-                                public void run(){
-                                    canvas.drawCircle(fingerX[4], fingerY[4], 50, p_blue);
-                                    System.out.println("heeeere"+"已经将第4个触点绘制为蓝色");
-                                    invalidate();
-                                }
-                            });
-                            break;
-                    }}
-
-                counter = counter + 1;
-                if(counter == qtaps.size()){
-                    System.out.println("heeeere"+"试图将counter归零");
-                    counter = 0;
-                }
-
-                if(synchron){
-                    try {
-                        Thread.sleep(synInterval);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    else if(qSequentials[seqNum].qTaps.get(counter).order != qSequentials[seqNum].qTaps.get(counter + 1).order){
+                        // 顺序绘制
+                        synchron = false;
                     }
-                }
-                else{
+                    else{
+                        // 同时绘制
+                        synchron = true;
+                    }
+                    System.out.println("heeeere in the while");
+                    System.out.println("heeeere"+"synchron:" + synchron);
+                    System.out.println("heeeere"+"counter:"+counter);
+                    System.out.println("heeeere"+"qtaps.get(counter).index:"+qSequentials[seqNum].qTaps.get(counter).index);
                     try {
                         Thread.sleep(seqInterval);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    // 开始绘制
+
+                    if(qSequentials[seqNum].qTaps.get(counter).direction){
+                        switch (qSequentials[seqNum].qTaps.get(counter).index){
+                            case 0:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[0], fingerY[0], 50, p_red);
+                                        System.out.println("heeeere"+"已经将第0个触点绘制为红色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                            case 1:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[1], fingerY[1], 50, p_red);
+                                        System.out.println("heeeere"+"已经将第1个触点绘制为红色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                            case 2:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[2], fingerY[2], 50, p_red);
+                                        System.out.println("heeeere"+"已经将第2个触点绘制为红色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                            case 3:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[3], fingerY[3], 50, p_red);
+                                        System.out.println("heeeere"+"已经将第3个触点绘制为红色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                            case 4:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[4], fingerY[4], 50, p_red);
+                                        System.out.println("heeeere"+"已经将第4个触点绘制为红色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                        }
+
+                    }
+                    else{
+                        switch (qSequentials[seqNum].qTaps.get(counter).index){
+                            case 0:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[0], fingerY[0], 50, p_blue);
+                                        System.out.println("heeeere"+"已经将第0个触点绘制为蓝色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                            case 1:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[1], fingerY[1], 50, p_blue);
+                                        System.out.println("heeeere"+"已经将第1个触点绘制为蓝色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                            case 2:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[2], fingerY[2], 50, p_blue);
+                                        System.out.println("heeeere"+"已经将第2个触点绘制为蓝色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                            case 3:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[3], fingerY[3], 50, p_blue);
+                                        System.out.println("heeeere"+"已经将第3个触点绘制为蓝色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                            case 4:
+                                handler.post(new Runnable(){
+                                    public void run(){
+                                        canvas.drawCircle(fingerX[4], fingerY[4], 50, p_blue);
+                                        System.out.println("heeeere"+"已经将第4个触点绘制为蓝色");
+                                        invalidate();
+                                    }
+                                });
+                                break;
+                        }}
+
+                    counter = counter + 1;
+//                if(counter == qSequentials[seqNum].qTaps.size()){
+//                    System.out.println("heeeere"+"试图将counter归零");
+//                    counter = 0;
+//                }
+
+                    if(synchron){
+                        try {
+                            Thread.sleep(synInterval);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else{
+                        try {
+                            Thread.sleep(seqInterval);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
+            System.out.println("heeeere"+"run 运行结束");
         }
     };
 
-    void drawTapFlash(final ArrayList<QTap> qtaps) {
-        this.qtaps = qtaps;
+    void drawTapFlash(int seqNum) {
+        this.runnable.setSeqNum(seqNum);
         bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
 
@@ -214,9 +260,8 @@ public class DrawFlash extends View {
             canvas.drawCircle(fingerX[i], fingerY[i], 50, p_blue);
         }
 
-        Thread thread = new Thread(runnable);
+        thread = new Thread(runnable);
         thread.start();
-
 
     }
 
@@ -224,6 +269,12 @@ public class DrawFlash extends View {
     void drawNothing(){
         bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
+        final Paint p_blue = new Paint();
+        p_blue.setColor(Color.BLUE);
+
+        for (int i = 0; i < 5; i++){
+            canvas.drawCircle(fingerX[i], fingerY[i], 50, p_blue);
+        }
         invalidate();
     }
 

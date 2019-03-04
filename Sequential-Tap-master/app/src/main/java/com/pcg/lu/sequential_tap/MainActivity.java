@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 ConstraintLayout layout = findViewById(R.id.main_layout);
                 drawView = new DrawView(this);
                 layout.addView(drawView);
-                drawFlash = new DrawFlash(this);
+                drawFlash = new DrawFlash(this, qSequentials);
                 layout.addView(drawFlash);
                 break;
             case VIEW_GESTURE:
@@ -417,7 +417,7 @@ public class MainActivity extends AppCompatActivity {
                 testStart_s.setVisibility(View.GONE);
 
                 drawFlash.runnable.isDrawing = true;
-                drawFlash.drawTapFlash(qSequentials[setupNumber].qTaps);
+                drawFlash.drawTapFlash(setupNumber);
 
                 modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
                 setupTip_s.setText(qSequentials[setupNumber].tapName);
@@ -436,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
                 testStart_s.setVisibility(View.GONE);
 
                 drawFlash.runnable.isDrawing = true;
-                drawFlash.drawTapFlash(qSequentials[learnNumber].qTaps);
+                drawFlash.drawTapFlash(learnNumber);
                 break;
             case SEQUENTIAL_TEST:
                 setupTip_s.setVisibility(View.GONE);
@@ -470,10 +470,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-//        drawFlash.runnable.isDrawing = false;
-//        drawFlash.drawNothing();
-//        drawFlash.runnable.isDrawing = true;
-        drawFlash.drawTapFlash(qSequentials[setupNumber].qTaps);
+        drawFlash.runnable.isDrawing = false;
+        drawFlash.thread.interrupt();
+        drawFlash.drawNothing();
+        drawFlash.runnable.isDrawing = true;
+        drawFlash.drawTapFlash(setupNumber);
         modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
         setupTip_s.setText(qSequentials[setupNumber].tapName);
     }
