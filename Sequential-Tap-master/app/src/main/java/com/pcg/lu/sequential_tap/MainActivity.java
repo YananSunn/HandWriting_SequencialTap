@@ -2,6 +2,7 @@ package com.pcg.lu.sequential_tap;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -53,15 +54,18 @@ public class MainActivity extends AppCompatActivity {
 
     TextView setupTip_s;
     Button setupSave_s;
+    Button setupPlay_s;
     Button setupLast_s;
     Button setupNext_s;
 
     TextView learnFunction_s;
     TextView learnResult_s;
+    Button learnPlay_s;
     Button learnLast_s;
     Button learnNext_s;
 
     TextView testTip_s;
+    TextView testResult_s;
     Button testStart_s;
 
 
@@ -128,7 +132,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     // 初始化tap序列 tap功能名称
+
     public void initialQSequential(){
+        final long seqInterval = 300;
+        final long synInterval = 15;
+
         for(int i = 0; i < seqSize; i++){
             qSequentials[i] = new QSequential();
         }
@@ -142,15 +150,85 @@ public class MainActivity extends AppCompatActivity {
 //        qSequentials[0].qTaps.add(new QTap(2,5,false));
 //        qSequentials[0].qTaps.add(new QTap(3,6,false));
 
-        qSequentials[1].qTaps.add(new QTap(0,1,true));
+        qSequentials[1].qTaps.add(new QTap(1,1,true));
         qSequentials[1].qTaps.add(new QTap(4,2,true));
-        qSequentials[1].qTaps.add(new QTap(0,3,false));
+        qSequentials[1].qTaps.add(new QTap(1,3,false));
         qSequentials[1].qTaps.add(new QTap(4,4,false));
 
         qSequentials[0].tapName = "打开微信";
         qSequentials[1].tapName = "调整音量";
+
+        for(int i = 0; i < seqSize; i++){
+            for(int j = 0; j < qSequentials[i].qTaps.size() - 1; j++){
+                if(qSequentials[i].qTaps.get(j).order == qSequentials[i].qTaps.get(j+1).order){
+                    qSequentials[i].runTime = qSequentials[i].runTime + synInterval;
+                }
+                else {
+                    qSequentials[i].runTime = qSequentials[i].runTime + seqInterval;
+                }
+            }
+            qSequentials[i].runTime = qSequentials[i].runTime + 2000;
+        }
     }
 
+    // 工具类
+    private static Handler handler=new Handler();
+
+    public class SetEnableRunnable implements Runnable {
+        int mode;
+        long enableTime;
+
+        public SetEnableRunnable(int mode, long enableTime){
+            this.enableTime= enableTime;
+            this.mode = mode;
+        }
+
+        public void run() {
+            if(mode == SEQUENTIAL_SETUP){
+                handler.post(new Runnable(){
+                    public void run(){
+                        setupNext_s.setEnabled(false);
+                        setupPlay_s.setEnabled(false);
+                        setupLast_s.setEnabled(false);
+                    }
+                });
+                try {
+                    Thread.sleep(enableTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable(){
+                    public void run(){
+                        setupNext_s.setEnabled(true);
+                        setupPlay_s.setEnabled(true);
+                        setupLast_s.setEnabled(true);
+                    }
+                });
+            }
+            else if(mode == SEQUENTIAL_LEARN){
+                handler.post(new Runnable(){
+                    public void run(){
+                        learnNext_s.setEnabled(false);
+                        learnPlay_s.setEnabled(false);
+                        learnLast_s.setEnabled(false);
+                    }
+                });
+                try {
+                    Thread.sleep(enableTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable(){
+                    public void run(){
+                        learnNext_s.setEnabled(true);
+                        learnPlay_s.setEnabled(true);
+                        learnLast_s.setEnabled(true);
+                    }
+                });
+            }
+
+        }
+    };
 
 
     //初始函数
@@ -169,22 +247,27 @@ public class MainActivity extends AppCompatActivity {
         setupTip_s = (TextView)findViewById(R.id.setup_tip_s);
         setupSave_s = (Button)findViewById(R.id.setup_save_s);
         setupLast_s = (Button)findViewById(R.id.setup_last_s);
+        setupPlay_s = (Button)findViewById(R.id.setup_play_s);
         setupNext_s = (Button)findViewById(R.id.setup_next_s);
 
         learnFunction_s = (TextView)findViewById(R.id.learn_function_s);
         learnResult_s = (TextView)findViewById(R.id.learn_result_s);
         learnLast_s = (Button)findViewById(R.id.learn_last_s);
+        learnPlay_s = (Button)findViewById(R.id.learn_play_s);
         learnNext_s = (Button)findViewById(R.id.learn_next_s);
 
         testTip_s = (TextView)findViewById(R.id.test_tip_s);
+        testResult_s = (TextView)findViewById(R.id.test_result_s);
         testStart_s = (Button)findViewById(R.id.test_start_s);
 
 
         learnFunction_s.setVisibility(View.GONE);
         learnResult_s.setVisibility(View.GONE);
         learnLast_s.setVisibility(View.GONE);
+        learnPlay_s.setVisibility(View.GONE);
         learnNext_s.setVisibility(View.GONE);
         testTip_s.setVisibility(View.GONE);
+        testResult_s.setVisibility(View.GONE);
         testStart_s.setVisibility(View.GONE);
 
         initialQSequential();
@@ -408,15 +491,22 @@ public class MainActivity extends AppCompatActivity {
                 setupTip_s.setVisibility(View.VISIBLE);
                 setupSave_s.setVisibility(View.VISIBLE);
                 setupLast_s.setVisibility(View.VISIBLE);
+                setupPlay_s.setVisibility(View.VISIBLE);
                 setupNext_s.setVisibility(View.VISIBLE);
                 learnFunction_s.setVisibility(View.GONE);
                 learnResult_s.setVisibility(View.GONE);
                 learnLast_s.setVisibility(View.GONE);
+                learnPlay_s.setVisibility(View.GONE);
                 learnNext_s.setVisibility(View.GONE);
                 testTip_s.setVisibility(View.GONE);
+                testResult_s.setVisibility(View.GONE);
                 testStart_s.setVisibility(View.GONE);
 
-                drawFlash.runnable.isDrawing = true;
+                SetEnableRunnable runnableSetup = new SetEnableRunnable(SEQUENTIAL_SETUP, qSequentials[setupNumber].runTime);
+                Thread threadSetup = new Thread(runnableSetup);
+                threadSetup.start();
+
+                drawView.drawNothing();
                 drawFlash.drawTapFlash(setupNumber);
 
                 modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
@@ -427,31 +517,45 @@ public class MainActivity extends AppCompatActivity {
                 setupTip_s.setVisibility(View.GONE);
                 setupSave_s.setVisibility(View.GONE);
                 setupLast_s.setVisibility(View.GONE);
+                setupPlay_s.setVisibility(View.GONE);
                 setupNext_s.setVisibility(View.GONE);
                 learnFunction_s.setVisibility(View.VISIBLE);
                 learnResult_s.setVisibility(View.VISIBLE);
                 learnLast_s.setVisibility(View.VISIBLE);
+                learnPlay_s.setVisibility(View.VISIBLE);
                 learnNext_s.setVisibility(View.VISIBLE);
                 testTip_s.setVisibility(View.GONE);
+                testResult_s.setVisibility(View.GONE);
                 testStart_s.setVisibility(View.GONE);
 
-                drawFlash.runnable.isDrawing = true;
+                SetEnableRunnable runnableLearn = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+                Thread threadLearn = new Thread(runnableLearn);
+                threadLearn.start();
+
+                drawView.drawNothing();
                 drawFlash.drawTapFlash(learnNumber);
+
+                modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
+                learnFunction_s.setText(qSequentials[learnNumber].tapName);
                 break;
             case SEQUENTIAL_TEST:
                 setupTip_s.setVisibility(View.GONE);
                 setupSave_s.setVisibility(View.GONE);
                 setupLast_s.setVisibility(View.GONE);
+                setupPlay_s.setVisibility(View.GONE);
                 setupNext_s.setVisibility(View.GONE);
                 learnFunction_s.setVisibility(View.GONE);
                 learnResult_s.setVisibility(View.GONE);
                 learnLast_s.setVisibility(View.GONE);
+                learnPlay_s.setVisibility(View.GONE);
                 learnNext_s.setVisibility(View.GONE);
                 testTip_s.setVisibility(View.VISIBLE);
+                testResult_s.setVisibility(View.VISIBLE);
                 testStart_s.setVisibility(View.VISIBLE);
 
-                drawFlash.runnable.isDrawing = false;
+                drawView.drawNothing();
                 drawFlash.drawNothing();
+                modeTip_s.setText("请开始测试，测试共" + testTime_s + "次");
                 break;
         }
     }
@@ -462,21 +566,46 @@ public class MainActivity extends AppCompatActivity {
             if(setupNumber >= seqSize){
                 setupNumber = 0;
             }
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_SETUP, qSequentials[setupNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(setupNumber);
+
+            modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
+            setupTip_s.setText(qSequentials[setupNumber].tapName);
         }
         else if(state_s == SEQUENTIAL_LEARN){
             learnNumber = learnNumber + 1;
             if(learnNumber >= seqSize){
                 learnNumber = 0;
             }
-        }
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(learnNumber);
 
-        drawFlash.runnable.isDrawing = false;
-        drawFlash.thread.interrupt();
-        drawFlash.drawNothing();
-        drawFlash.runnable.isDrawing = true;
-        drawFlash.drawTapFlash(setupNumber);
-        modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
-        setupTip_s.setText(qSequentials[setupNumber].tapName);
+            modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
+            learnFunction_s.setText(qSequentials[learnNumber].tapName);
+        }
+    }
+
+    public void PlayClicked_s(View v){
+        if(state_s == SEQUENTIAL_SETUP){
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_SETUP, qSequentials[setupNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(setupNumber);
+        }
+        else if(state_s == SEQUENTIAL_LEARN){
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(learnNumber);
+        }
     }
 
     public void LastClicked_s(View v){
@@ -485,18 +614,29 @@ public class MainActivity extends AppCompatActivity {
             if(setupNumber < 0){
                 setupNumber = seqSize - 1;
             }
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_SETUP, qSequentials[setupNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(setupNumber);
+
+            modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
+            setupTip_s.setText(qSequentials[setupNumber].tapName);
         }
         else if(state_s == SEQUENTIAL_LEARN){
             learnNumber = learnNumber - 1;
             if(learnNumber < 0){
                 learnNumber = seqSize - 1;
             }
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(learnNumber);
+
+            modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
+            learnFunction_s.setText(qSequentials[learnNumber].tapName);
         }
-//
-//        drawFlash.runnable.isDrawing = false;
-//        drawFlash.drawNothing();
-//        drawFlash.runnable.isDrawing = true;
-//        drawFlash.drawTapFlash(qSequentials[learnNumber].qTaps);
     }
 
     // 敲击计时
@@ -520,9 +660,11 @@ public class MainActivity extends AppCompatActivity {
                         String a = CompareCandi_s();
                         if(a == testCase_s[testNum_s]){
                             rightCaseNum_s = rightCaseNum_s + 1;
+                            testResult_s.setText("敲击正确");
                         }
                         else {
                             wrongCaseNum_s = wrongCaseNum_s + 1;
+                            testResult_s.setText("敲击错误");
                         }
                         testNum_s = testNum_s + 1;
                         //System.out.println("heeeere "+testNum_s);
@@ -544,6 +686,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else{
                             testTip_s.setText("请敲击 "+testCase_s[testNum_s]);
+                        }
+                    }
+                    else if(page == VIEW_SEQUENTIAL && state_s == SEQUENTIAL_LEARN){
+                        String a = CompareCandi_s();
+                        if(a == qSequentials[learnNumber].tapName){
+                            learnResult_s.setText("敲击正确");
+                        }
+                        else {
+                            learnResult_s.setText("敲击错误");
                         }
                     }
                     qtouchs = new ArrayList();
@@ -827,7 +978,7 @@ public class MainActivity extends AppCompatActivity {
         if(caseSize == 0){
             AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
             nameNull.setTitle("错误" ) ;
-            nameNull.setMessage("预设的手势为空") ;
+            nameNull.setMessage("预设为空") ;
             nameNull.setPositiveButton("ok" ,  null );
             nameNull.show();
         }

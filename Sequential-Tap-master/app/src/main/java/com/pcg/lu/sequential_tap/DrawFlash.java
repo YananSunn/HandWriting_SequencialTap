@@ -16,8 +16,8 @@ public class DrawFlash extends View {
     final static int DEVICE_WIDTH = 1440;
     final static int DEVICE_HEIGHT = 2960;
 
-    final static int[] fingerX = new int[]{100, 350, 550, 750, 950};
-    final static int[] fingerY = new int[]{600, 400, 300, 400, 530};
+    final static int[] fingerX = new int[]{100, 400, 580, 760, 940};
+    final static int[] fingerY = new int[]{700, 500, 400, 490, 620};
 
     Bitmap bitmap = null;
     Canvas canvas = null;
@@ -47,6 +47,9 @@ public class DrawFlash extends View {
         initialQSequential();
     }
     public void initialQSequential(){
+        final long seqInterval = 300;
+        final long synInterval = 15;
+
         for(int i = 0; i < seqSize; i++){
             qSequentials[i] = new QSequential();
         }
@@ -60,14 +63,27 @@ public class DrawFlash extends View {
 //        qSequentials[0].qTaps.add(new QTap(2,5,false));
 //        qSequentials[0].qTaps.add(new QTap(3,6,false));
 
-        qSequentials[1].qTaps.add(new QTap(0,1,true));
+        qSequentials[1].qTaps.add(new QTap(1,1,true));
         qSequentials[1].qTaps.add(new QTap(4,2,true));
-        qSequentials[1].qTaps.add(new QTap(0,3,false));
+        qSequentials[1].qTaps.add(new QTap(1,3,false));
         qSequentials[1].qTaps.add(new QTap(4,4,false));
 
         qSequentials[0].tapName = "打开微信";
         qSequentials[1].tapName = "调整音量";
+
+        for(int i = 0; i < seqSize; i++){
+            for(int j = 0; j < qSequentials[i].qTaps.size() - 1; j++){
+                if(qSequentials[i].qTaps.get(j).order == qSequentials[i].qTaps.get(j+1).order){
+                    qSequentials[i].runTime = qSequentials[i].runTime + synInterval;
+                }
+                else {
+                    qSequentials[i].runTime = qSequentials[i].runTime + seqInterval;
+                }
+            }
+            qSequentials[i].runTime = qSequentials[i].runTime + 2000;
+        }
     }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -76,7 +92,6 @@ public class DrawFlash extends View {
 
     public class MyRunnable implements Runnable {
         int seqNum;
-        public boolean isDrawing = false;
 
         public MyRunnable(int seqNum){
             this.seqNum = seqNum;
@@ -269,12 +284,7 @@ public class DrawFlash extends View {
     void drawNothing(){
         bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
-        final Paint p_blue = new Paint();
-        p_blue.setColor(Color.BLUE);
 
-        for (int i = 0; i < 5; i++){
-            canvas.drawCircle(fingerX[i], fingerY[i], 50, p_blue);
-        }
         invalidate();
     }
 

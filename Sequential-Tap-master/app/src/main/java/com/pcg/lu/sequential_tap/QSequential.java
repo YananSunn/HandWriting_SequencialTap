@@ -7,9 +7,12 @@ public class QSequential {
     public String tapName;
     public boolean setup;
 
+    public long runTime;
+
     public QSequential(){
         qTaps = new ArrayList();
         tapName = null;
         setup = false;
+        runTime = 0;
     }
 }

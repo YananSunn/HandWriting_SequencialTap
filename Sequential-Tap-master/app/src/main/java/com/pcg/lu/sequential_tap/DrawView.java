@@ -44,7 +44,7 @@ class DrawView extends View {
         for (int i = 0; i < qtouchs.size(); i++) {
             QTouch qtouch = qtouchs.get(i);
             int y = (qtouch.order + 1) * 100;
-            canvas.drawLine(qtouch.l * 1000f + 100f, y+300, qtouch.r * 1000 + 100, y+300, p_red);
+            canvas.drawLine(qtouch.l * 1000f + 100f, y+800, qtouch.r * 1000 + 100, y+800, p_red);
             canvas.drawCircle(qtouch.x, qtouch.y - 250, 10, p_blue);
 
 //            System.out.println("order:" + qtouch.order);
@@ -67,6 +67,12 @@ class DrawView extends View {
             Point m_point = qmoves.get(i);
             canvas.drawCircle(m_point.x , m_point.y - 250, 10, p_blue);
         }
+        invalidate();
+    }
+
+    void drawNothing(){
+        bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
         invalidate();
     }
 }
