@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
     TouchEvent[] touchEvent = new TouchEvent[10];
     ArrayList<QTouch> qtouchs = new ArrayList();
     ArrayList<QTouch> qtouchs_copy = new ArrayList();
+
     ArrayList<Point> qmoves = new ArrayList();
     ArrayList<Candidate> candidates = new ArrayList();
     ArrayList<Candidate_s> candidates_s = new ArrayList();
@@ -141,6 +142,8 @@ public class MainActivity extends AppCompatActivity {
 //    ArrayList<String> tapNames = new ArrayList();
 
     QSequential[] qSequentials = new QSequential[seqSize];
+    QGesture[] qGestures = new QGesture[gestureSize];
+
     Timer idleTimer = null;
 
 
@@ -161,8 +164,8 @@ public class MainActivity extends AppCompatActivity {
     }
     // 初始化tap序列 tap功能名称
     public void initialQSequential(){
-        final long seqInterval = 300;
-        final long synInterval = 15;
+        final long seqInterval = 500;
+        final long synInterval = 100;
 
         for(int i = 0; i < seqSize; i++){
             qSequentials[i] = new QSequential();
@@ -195,6 +198,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             qSequentials[i].runTime = qSequentials[i].runTime + 2000;
+        }
+    }
+    // 初始化gesture序列 gesture功能名称
+    public void initialQGesture(){
+        for(int i = 0; i < seqSize; i++){
+            qGestures[i] = new QGesture();
+        }
+        qGestures[0].qPoints.add(new Point(300,200));
+        qGestures[0].qPoints.add(new Point(400,600));
+        qGestures[0].qPoints.add(new Point(500,200));
+        qGestures[0].qPoints.add(new Point(600,600));
+        qGestures[0].qPoints.add(new Point(700,200));
+
+        qGestures[1].qPoints.add(new Point(300,600));
+        qGestures[1].qPoints.add(new Point(400,200));
+        qGestures[1].qPoints.add(new Point(500,600));
+        qGestures[1].qPoints.add(new Point(600,200));
+        qGestures[1].qPoints.add(new Point(700,600));
+
+        qGestures[0].gestureName = "打开微博";
+        qGestures[1].gestureName = "打开视频播放器";
+
+        for(int i = 0; i < gestureSize; i++){
+            qGestures[i].runTime = qGestures[i].qPoints.size() * 100 + 1000;
         }
     }
     // 初始化gesture页面组件
@@ -304,6 +331,48 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
+            else if(mode == GESTURE_SETUP){
+                handler.post(new Runnable(){
+                    public void run(){
+                        setupNext.setEnabled(false);
+                        setupPlay.setEnabled(false);
+                        setupLast.setEnabled(false);
+                    }
+                });
+                try {
+                    Thread.sleep(enableTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable(){
+                    public void run(){
+                        setupNext.setEnabled(true);
+                        setupPlay.setEnabled(true);
+                        setupLast.setEnabled(true);
+                    }
+                });
+            }
+            else if(mode == GESTURE_LEARN){
+                handler.post(new Runnable(){
+                    public void run(){
+                        learnNext.setEnabled(false);
+                        learnPlay.setEnabled(false);
+                        learnLast.setEnabled(false);
+                    }
+                });
+                try {
+                    Thread.sleep(enableTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable(){
+                    public void run(){
+                        learnNext.setEnabled(true);
+                        learnPlay.setEnabled(true);
+                        learnLast.setEnabled(true);
+                    }
+                });
+            }
 
         }
     };
@@ -349,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
         testStart_s.setVisibility(View.GONE);
 
         initialQSequential();
+        initialQGesture();
 
         list_s.add("初始设置");
         list_s.add("学习模式");
@@ -390,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
                 ConstraintLayout layout = findViewById(R.id.main_layout);
                 drawView = new DrawView(this);
                 layout.addView(drawView);
-                drawFlash = new DrawFlash(this, qSequentials);
+                drawFlash = new DrawFlash(this);
                 layout.addView(drawFlash);
                 break;
             case VIEW_GESTURE:
@@ -398,7 +468,7 @@ public class MainActivity extends AppCompatActivity {
                 ConstraintLayout layout_gesture = findViewById(R.id.gesture_layout);
                 drawView2 = new DrawView(this);
                 layout_gesture.addView(drawView2);
-                drawFlash2 = new DrawFlash(this, qSequentials);
+                drawFlash2 = new DrawFlash(this);
                 layout_gesture.addView(drawFlash2);
                 break;
         }
@@ -1152,15 +1222,15 @@ public class MainActivity extends AppCompatActivity {
                 testResult.setVisibility(View.GONE);
                 testStart.setVisibility(View.GONE);
 
-                SetEnableRunnable runnableSetup = new SetEnableRunnable(GESTURE_SETUP, qSequentials[setupNumber].runTime);
+                SetEnableRunnable runnableSetup = new SetEnableRunnable(GESTURE_SETUP, qGestures[setupNumber].runTime);
                 Thread threadSetup = new Thread(runnableSetup);
                 threadSetup.start();
 
                 drawView2.drawNothing();
-                drawFlash.drawTapFlash(setupNumber);
+                drawFlash2.drawShapeFlash(setupNumber);
 
                 modeTip.setText("请对第"+ setupNumber + "个功能进行初始设置");
-                setupTip_s.setText(qSequentials[setupNumber].tapName);
+                setupTip.setText(qGestures[setupNumber].gestureName);
                 break;
 
             case GESTURE_LEARN:
@@ -1178,15 +1248,15 @@ public class MainActivity extends AppCompatActivity {
                 testResult.setVisibility(View.GONE);
                 testStart.setVisibility(View.GONE);
 
-                SetEnableRunnable runnableLearn = new SetEnableRunnable(GESTURE_LEARN, qSequentials[learnNumber].runTime);
+                SetEnableRunnable runnableLearn = new SetEnableRunnable(GESTURE_LEARN, qGestures[learnNumber].runTime);
                 Thread threadLearn = new Thread(runnableLearn);
                 threadLearn.start();
 
                 drawView2.drawNothing();
-                drawFlash.drawTapFlash(learnNumber);
+                drawFlash2.drawShapeFlash(learnNumber);
 
                 modeTip.setText("请巩固学习第"+ learnNumber + "个功能");
-                learnFunction.setText(qSequentials[learnNumber].tapName);
+                learnFunction.setText(qGestures[learnNumber].gestureName);
                 break;
 
             case GESTURE_TEST:
@@ -1205,8 +1275,8 @@ public class MainActivity extends AppCompatActivity {
                 testStart.setVisibility(View.VISIBLE);
 
                 drawView2.drawNothing();
-                drawFlash.drawNothing();
-                modeTip.setText("请开始测试，测试共" + testTime_s + "次");
+                drawFlash2.drawNothing();
+                modeTip.setText("请开始测试，测试共" + testTime + "次");
                 break;
         }
     }

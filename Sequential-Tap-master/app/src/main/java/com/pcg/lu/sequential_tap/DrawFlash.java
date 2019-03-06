@@ -25,30 +25,34 @@ public class DrawFlash extends View {
     private static Handler handler=new Handler();
 
     final int seqSize = 2;
-    QSequential[] qSequentials = new QSequential[seqSize];
+    final int gestureSize = 2;
 
-    final long seqInterval = 300;
-    final long synInterval = 15;
+    int gestureCounter = 0;
+    QSequential[] qSequentials = new QSequential[seqSize];
+    QGesture[] qGestures = new QGesture[gestureSize];
+
+    final long seqInterval = 500;
+    final long synInterval = 100;
     Paint p_red = new Paint();
     Paint p_blue = new Paint();
 
-    MyRunnable runnable = new MyRunnable(0);
-    public Thread thread;
+    TapFlashRunnable tapRunnable = new TapFlashRunnable(0);
+    ShapeFlashRunnable shapeRunnable = new ShapeFlashRunnable(0);
+    public Thread tapThread;
+    public Thread shapeThread;
 
-    public DrawFlash(Context context, QSequential[] qSequentials) {
+    public DrawFlash(Context context) {
         super(context);
         p_red.setColor(Color.RED);
         p_red.setStrokeWidth(10);
         p_blue.setColor(Color.BLUE);
 
-        for(int i = 0; i < seqSize; i++){
-            this.qSequentials[i] = new QSequential();
-        }
         initialQSequential();
+        initialQGesture();
     }
     public void initialQSequential(){
-        final long seqInterval = 300;
-        final long synInterval = 15;
+        final long seqInterval = 500;
+        final long synInterval = 100;
 
         for(int i = 0; i < seqSize; i++){
             qSequentials[i] = new QSequential();
@@ -83,6 +87,30 @@ public class DrawFlash extends View {
             qSequentials[i].runTime = qSequentials[i].runTime + 2000;
         }
     }
+    public void initialQGesture(){
+        for(int i = 0; i < seqSize; i++){
+            qGestures[i] = new QGesture();
+        }
+        qGestures[0].qPoints.add(new Point(300,200));
+        qGestures[0].qPoints.add(new Point(400,600));
+        qGestures[0].qPoints.add(new Point(500,200));
+        qGestures[0].qPoints.add(new Point(600,600));
+        qGestures[0].qPoints.add(new Point(700,200));
+
+        qGestures[1].qPoints.add(new Point(300,600));
+        qGestures[1].qPoints.add(new Point(400,200));
+        qGestures[1].qPoints.add(new Point(500,600));
+        qGestures[1].qPoints.add(new Point(600,200));
+        qGestures[1].qPoints.add(new Point(700,600));
+
+        qGestures[0].gestureName = "打开微博";
+        qGestures[1].gestureName = "打开视频播放器";
+
+        for(int i = 0; i < gestureSize; i++){
+            qGestures[i].runTime = qGestures[i].qPoints.size() * 100 + 1000;
+        }
+    }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -90,10 +118,10 @@ public class DrawFlash extends View {
         if (bitmap != null) canvas.drawBitmap(bitmap, 0, 0, new Paint());
     }
 
-    public class MyRunnable implements Runnable {
+    public class TapFlashRunnable implements Runnable {
         int seqNum;
 
-        public MyRunnable(int seqNum){
+        public TapFlashRunnable(int seqNum){
             this.seqNum = seqNum;
         }
         public void setSeqNum(int seqNum){
@@ -103,6 +131,11 @@ public class DrawFlash extends View {
         public void run() {
             int counter = 0;
             boolean synchron = false;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             while (counter < qSequentials[seqNum].qTaps.size()) {
                 if(Thread.currentThread().isInterrupted())
                 {
@@ -122,15 +155,6 @@ public class DrawFlash extends View {
                     else{
                         // 同时绘制
                         synchron = true;
-                    }
-                    System.out.println("heeeere in the while");
-                    System.out.println("heeeere"+"synchron:" + synchron);
-                    System.out.println("heeeere"+"counter:"+counter);
-                    System.out.println("heeeere"+"qtaps.get(counter).index:"+qSequentials[seqNum].qTaps.get(counter).index);
-                    try {
-                        Thread.sleep(seqInterval);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                     // 开始绘制
 
@@ -260,45 +284,98 @@ public class DrawFlash extends View {
     };
 
     void drawTapFlash(int seqNum) {
-        this.runnable.setSeqNum(seqNum);
-        bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
-
-        final Paint p_red = new Paint();
-        p_red.setColor(Color.RED);
-        p_red.setStrokeWidth(10);
-
-       final Paint p_blue = new Paint();
-        p_blue.setColor(Color.BLUE);
-
-        for (int i = 0; i < 5; i++){
-            canvas.drawCircle(fingerX[i], fingerY[i], 50, p_blue);
-        }
-
-        thread = new Thread(runnable);
-        thread.start();
-
-    }
-
-
-    void drawNothing(){
-        bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
-
-        invalidate();
-    }
-
-    void drawShape(ArrayList<Point> qmoves) {
+        this.tapRunnable.setSeqNum(seqNum);
         bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
 
         Paint p_blue = new Paint();
         p_blue.setColor(Color.BLUE);
 
-        for (int i = 0; i < qmoves.size(); i++) {
-            Point m_point = qmoves.get(i);
-            canvas.drawCircle(m_point.x , m_point.y - 250, 10, p_blue);
+        for (int i = 0; i < 5; i++){
+            canvas.drawCircle(fingerX[i], fingerY[i], 50, p_blue);
         }
+        invalidate();
+
+        tapThread = new Thread(tapRunnable);
+        tapThread.start();
+
+    }
+
+
+    public class ShapeFlashRunnable implements Runnable {
+        int gestureNum;
+
+        public ShapeFlashRunnable(int gestureNum){
+            this.gestureNum = gestureNum;
+        }
+        public void setGestureNum(int gestureNum){
+            this.gestureNum = gestureNum;
+        }
+
+        public void run() {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            while (gestureCounter < qGestures[gestureNum].qPoints.size()) {
+                if(gestureCounter == 0){
+                    handler.post(new Runnable() {
+                        public void run() {
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 50, p_red);
+                            invalidate();
+                        }
+                    });
+                }
+                else if(gestureCounter == qGestures[gestureNum].qPoints.size()){
+                    handler.post(new Runnable() {
+                        public void run() {
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_red);
+                            invalidate();
+                        }
+                    });
+                }
+                else {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 50, p_red);
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_red);
+                            invalidate();
+                        }
+                    });
+                }
+                gestureCounter = gestureCounter + 1;
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    void drawShapeFlash(int gestureNum) {
+        shapeRunnable.setGestureNum(gestureNum);
+        bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+
+        Paint p_blue = new Paint();
+        p_blue.setColor(Color.BLUE);
+
+        for (int i = 0; i < qGestures[gestureNum].qPoints.size(); i++) {
+            System.out.println("heeeere x:"+ qGestures[gestureNum].qPoints.get(i).x + "y:" + qGestures[gestureNum].qPoints.get(i).y);
+            canvas.drawCircle(qGestures[gestureNum].qPoints.get(i).x , qGestures[gestureNum].qPoints.get(i).y, 30, p_blue);
+        }
+        invalidate();
+
+        shapeThread = new Thread(shapeRunnable);
+        shapeThread.start();
+    }
+
+    void drawNothing(){
+        bitmap = Bitmap.createBitmap(DEVICE_WIDTH, DEVICE_HEIGHT, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+
         invalidate();
     }
 }
