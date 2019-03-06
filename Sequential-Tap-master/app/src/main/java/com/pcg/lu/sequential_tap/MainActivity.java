@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     DrawView drawView;
     DrawView drawView2;
     DrawFlash drawFlash;
+    DrawFlash drawFlash2;
 
     TextView view;
     Button changeState;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
 // seq页面组件
     Spinner changeModeSpinner_s;
+    List<String> list_s = new ArrayList<String>();
+    ArrayAdapter<String> adapter_s;
     TextView modeTip_s;
 
     TextView setupTip_s;
@@ -69,6 +72,31 @@ public class MainActivity extends AppCompatActivity {
     Button testStart_s;
 
 
+// gesture页面组件
+    boolean isGestureInitial = false;
+
+    Spinner changeModeSpinner;
+    List<String> list = new ArrayList<String>();
+    ArrayAdapter<String> adapter;
+    TextView modeTip;
+
+    TextView setupTip;
+    Button setupSave;
+    Button setupPlay;
+    Button setupLast;
+    Button setupNext;
+
+    TextView learnFunction;
+    TextView learnResult;
+    Button learnPlay;
+    Button learnLast;
+    Button learnNext;
+
+    TextView testTip;
+    TextView testResult;
+    Button testStart;
+
+
     int page = VIEW_SEQUENTIAL;
     int state = GESTURE_SETUP;
     int state_s = SEQUENTIAL_SETUP;
@@ -86,8 +114,10 @@ public class MainActivity extends AppCompatActivity {
     long usedTime;
 
     final int seqSize = 2;
+    final int gestureSize = 2;
     int setupNumber = 0;
-    int learnNumber = 1;
+    int learnNumber = 0;
+
     boolean isTesting_s = false;
     final int testTime_s = 50;
     int testNum_s = 0;
@@ -99,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
     long endTime_s;
     long usedTime_s;
 
-    List<String> list_s = new ArrayList<String>();
-    ArrayAdapter<String> adapter_s;
 
     TouchEvent[] touchEvent = new TouchEvent[10];
     ArrayList<QTouch> qtouchs = new ArrayList();
@@ -132,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     // 初始化tap序列 tap功能名称
-
     public void initialQSequential(){
         final long seqInterval = 300;
         final long synInterval = 15;
@@ -169,6 +196,57 @@ public class MainActivity extends AppCompatActivity {
             }
             qSequentials[i].runTime = qSequentials[i].runTime + 2000;
         }
+    }
+    // 初始化gesture页面组件
+    public void initialGesturePage(){
+        changeModeSpinner = (Spinner)findViewById(R.id.change_mode);
+        modeTip = (TextView)findViewById(R.id.mode_tip);
+
+        setupTip = (TextView)findViewById(R.id.setup_tip);
+        setupSave = (Button)findViewById(R.id.setup_save);
+        setupLast = (Button)findViewById(R.id.setup_last);
+        setupPlay = (Button)findViewById(R.id.setup_play);
+        setupNext = (Button)findViewById(R.id.setup_next);
+
+        learnFunction = (TextView)findViewById(R.id.learn_function);
+        learnResult = (TextView)findViewById(R.id.learn_result);
+        learnLast = (Button)findViewById(R.id.learn_last);
+        learnPlay = (Button)findViewById(R.id.learn_play);
+        learnNext = (Button)findViewById(R.id.learn_next);
+
+        testTip = (TextView)findViewById(R.id.test_tip);
+        testResult = (TextView)findViewById(R.id.test_result);
+        testStart = (Button)findViewById(R.id.test_start);
+
+        list.add("初始设置");
+        list.add("学习模式");
+        list.add("测试模式");
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        changeModeSpinner.setAdapter(adapter);
+
+        changeModeSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int arg2, long arg3) {
+                /* 将所选mySpinner 的值带入myTextView 中 */
+                switch (arg2){
+                    case 0:
+                        state = GESTURE_SETUP;
+                        break;
+                    case 1:
+                        state = GESTURE_LEARN;
+                        break;
+                    case 2:
+                        state = GESTURE_TEST;
+                        break;
+                }
+                StateOnChange();
+            }
+
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        });
     }
 
     // 工具类
@@ -320,6 +398,8 @@ public class MainActivity extends AppCompatActivity {
                 ConstraintLayout layout_gesture = findViewById(R.id.gesture_layout);
                 drawView2 = new DrawView(this);
                 layout_gesture.addView(drawView2);
+                drawFlash2 = new DrawFlash(this, qSequentials);
+                layout_gesture.addView(drawFlash2);
                 break;
         }
     }
@@ -328,19 +408,130 @@ public class MainActivity extends AppCompatActivity {
         switch (page) {
             case VIEW_SEQUENTIAL:
                 onChangeView(VIEW_GESTURE);
-                view = (TextView)findViewById(R.id.textView);
-                changeState = (Button)findViewById(R.id.button3);
-                save = (Button)findViewById(R.id.button4);
-                edit = (EditText)findViewById(R.id.editText2);
-                gestureName = (TextView)findViewById(R.id.gesture_name);
-                startTest = (Button)findViewById(R.id.start_test);
-                view.setVisibility(View.GONE);
-                gestureName.setVisibility(View.GONE);
-                startTest.setVisibility(View.GONE);
+                if(!isGestureInitial){
+                    isGestureInitial = true;
+                    initialGesturePage();
+                }
+
+                changeModeSpinner = (Spinner)findViewById(R.id.change_mode);
+                modeTip = (TextView)findViewById(R.id.mode_tip);
+
+                setupTip = (TextView)findViewById(R.id.setup_tip);
+                setupSave = (Button)findViewById(R.id.setup_save);
+                setupLast = (Button)findViewById(R.id.setup_last);
+                setupPlay = (Button)findViewById(R.id.setup_play);
+                setupNext = (Button)findViewById(R.id.setup_next);
+
+                learnFunction = (TextView)findViewById(R.id.learn_function);
+                learnResult = (TextView)findViewById(R.id.learn_result);
+                learnLast = (Button)findViewById(R.id.learn_last);
+                learnPlay = (Button)findViewById(R.id.learn_play);
+                learnNext = (Button)findViewById(R.id.learn_next);
+
+                testTip = (TextView)findViewById(R.id.test_tip);
+                testResult = (TextView)findViewById(R.id.test_result);
+                testStart = (Button)findViewById(R.id.test_start);
+
+                adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                changeModeSpinner.setAdapter(adapter);
+
+                changeModeSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+                        /* 将所选mySpinner 的值带入myTextView 中 */
+                        switch (arg2){
+                            case 0:
+                                state = GESTURE_SETUP;
+                                break;
+                            case 1:
+                                state = GESTURE_LEARN;
+                                break;
+                            case 2:
+                                state = GESTURE_TEST;
+                                break;
+                        }
+                        StateOnChange();
+                    }
+
+                    public void onNothingSelected(AdapterView<?> arg0) {
+
+                    }
+                });
+
+                changeModeSpinner.setVisibility(View.VISIBLE);
+                modeTip.setVisibility(View.VISIBLE);
+                setupTip.setVisibility(View.VISIBLE);
+                setupSave.setVisibility(View.VISIBLE);
+                setupLast.setVisibility(View.VISIBLE);
+                setupPlay.setVisibility(View.VISIBLE);
+                setupNext.setVisibility(View.VISIBLE);
+
+
+                learnFunction.setVisibility(View.GONE);
+                learnResult.setVisibility(View.GONE);
+                learnLast.setVisibility(View.GONE);
+                learnPlay.setVisibility(View.GONE);
+                learnNext.setVisibility(View.GONE);
+                testTip.setVisibility(View.GONE);
+                testResult.setVisibility(View.GONE);
+                testStart.setVisibility(View.GONE);
+
+                state = GESTURE_SETUP;
+
+                setupNumber = 0;
+                learnNumber = 0;
                 break;
             case VIEW_GESTURE:
                 onChangeView(VIEW_SEQUENTIAL);
                 // 切换至seq
+
+                changeModeSpinner_s = (Spinner)findViewById(R.id.change_mode_s);
+                modeTip_s = (TextView)findViewById(R.id.mode_tip_s);
+
+                setupTip_s = (TextView)findViewById(R.id.setup_tip_s);
+                setupSave_s = (Button)findViewById(R.id.setup_save_s);
+                setupLast_s = (Button)findViewById(R.id.setup_last_s);
+                setupPlay_s = (Button)findViewById(R.id.setup_play_s);
+                setupNext_s = (Button)findViewById(R.id.setup_next_s);
+
+                learnFunction_s = (TextView)findViewById(R.id.learn_function_s);
+                learnResult_s = (TextView)findViewById(R.id.learn_result_s);
+                learnLast_s = (Button)findViewById(R.id.learn_last_s);
+                learnPlay_s = (Button)findViewById(R.id.learn_play_s);
+                learnNext_s = (Button)findViewById(R.id.learn_next_s);
+
+                testTip_s = (TextView)findViewById(R.id.test_tip_s);
+                testResult_s = (TextView)findViewById(R.id.test_result_s);
+                testStart_s = (Button)findViewById(R.id.test_start_s);
+
+
+                adapter_s = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_s);
+                adapter_s.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                changeModeSpinner_s.setAdapter(adapter_s);
+
+                changeModeSpinner_s.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+                        /* 将所选mySpinner 的值带入myTextView 中 */
+                        switch (arg2){
+                            case 0:
+                                state_s = SEQUENTIAL_SETUP;
+                                break;
+                            case 1:
+                                state_s = SEQUENTIAL_LEARN;
+                                break;
+                            case 2:
+                                state_s = SEQUENTIAL_TEST;
+                                break;
+                        }
+                        StateOnChange_s();
+                    }
+
+                    public void onNothingSelected(AdapterView<?> arg0) {
+
+                    }
+                });
 
                 // 默认组件及初始组件visible
                 changeModeSpinner_s.setVisibility(View.VISIBLE);
@@ -348,15 +539,23 @@ public class MainActivity extends AppCompatActivity {
                 setupTip_s.setVisibility(View.VISIBLE);
                 setupSave_s.setVisibility(View.VISIBLE);
                 setupLast_s.setVisibility(View.VISIBLE);
+                setupPlay_s.setVisibility(View.VISIBLE);
                 setupNext_s.setVisibility(View.VISIBLE);
 
                 // 其他模式组件gone
                 learnFunction_s.setVisibility(View.GONE);
                 learnResult_s.setVisibility(View.GONE);
                 learnLast_s.setVisibility(View.GONE);
+                learnPlay_s.setVisibility(View.GONE);
                 learnNext_s.setVisibility(View.GONE);
                 testTip_s.setVisibility(View.GONE);
+                testResult_s.setVisibility(View.GONE);
                 testStart_s.setVisibility(View.GONE);
+
+                state_s = SEQUENTIAL_SETUP;
+
+                setupNumber = 0;
+                learnNumber = 0;
                 break;
         }
     }
@@ -780,7 +979,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
-                    Toast.makeText(MainActivity.this, "已清除: " + which, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "已清除", Toast.LENGTH_SHORT).show();
                     int delNum = 0;
                     for (int i = 0; i < candidates_s.size(); i++){
                         if(name == candidates_s.get(i).name){
@@ -798,7 +997,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
-                    Toast.makeText(MainActivity.this, "未清除: " + which, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "未清除", Toast.LENGTH_SHORT).show();
                 }
             });
             //    显示出该对话框
@@ -820,73 +1019,6 @@ public class MainActivity extends AppCompatActivity {
             candidates_s.add(myCandi);
             qSequentials[setupNumber].setup = true;
         }
-
-
-
-//        if(name.equals("")){
-//            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
-//            nameNull.setTitle("提示" ) ;
-//            nameNull.setMessage("手势名称不可以为空" ) ;
-//            nameNull.setPositiveButton("是" ,  null );
-//            nameNull.show();
-//        }
-//        else if(name.equals("not found")){
-//            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
-//            nameNull.setTitle("提示" ) ;
-//            nameNull.setMessage("手势名称非法" ) ;
-//            nameNull.setPositiveButton("是" ,  null );
-//            nameNull.show();
-//        }
-//        else{
-//            if(checkDupli_s(name, candidates_s)){
-//                ArrayList<QTouch> tmp = new ArrayList();
-//                for(int i = 0; i < qtouchs_copy.size(); i++){
-////                    System.out.println("add qtouch into tmp round " + i);
-//                    qtouchs_copy = clearDiffer(qtouchs_copy);
-//                    QTouch p = new QTouch(qtouchs_copy.get(i).x, qtouchs_copy.get(i).y, qtouchs_copy.get(i).t0, qtouchs_copy.get(i).t1);
-//                    p.l = qtouchs_copy.get(i).l;
-//                    p.r = qtouchs_copy.get(i).r;
-//                    p.order = qtouchs_copy.get(i).order;
-//                    p.index = qtouchs_copy.get(i).index;
-//                    tmp.add(p);
-//                }
-//                Candidate_s myCandi = new Candidate_s(name, tmp);
-//                edit_s.setText("");
-//                candidates_s.add(myCandi);
-//            }
-//            else{
-////                AlertDialog.Builder nameDupli  = new AlertDialog.Builder(MainActivity.this);
-////                nameDupli.setTitle("提示" ) ;
-////                nameDupli.setMessage("手势名称不可以重复" ) ;
-////                nameDupli.setPositiveButton("是" ,  null );
-////                nameDupli.show();
-////                edit_s.setText("");
-//                for(int i = 0; i < candidates_s.size(); i++){
-//                    if(candidates_s.get(i).name.equals(name)){
-//                        ArrayList<QTouch> tmp = new ArrayList();
-//                        for(int j = 0; j < qtouchs_copy.size(); j++){
-//                            QTouch p = new QTouch(qtouchs_copy.get(j).x, qtouchs_copy.get(j).y, qtouchs_copy.get(j).t0, qtouchs_copy.get(j).t1);
-//                            p.l = qtouchs_copy.get(j).l;
-//                            p.r = qtouchs_copy.get(j).r;
-//                            p.order = qtouchs_copy.get(j).order;
-//                            p.index = qtouchs_copy.get(j).index;
-//                            tmp.add(p);
-//                        }
-//                        candidates_s.get(i).touchs.add(tmp);
-//                        edit_s.setText("");
-//                    }
-//                }
-//            }
-//        }
-    }
-    // 检查敲击命名重复
-    public boolean checkDupli_s(String a, ArrayList<Candidate_s> b){
-        for(int i = 0; i < b.size(); i++){
-            if(b.get(i).name.equals(a)){
-                return false;
-            }
-        }
-        return true;
     }
 
     // 对比候选项
@@ -1003,28 +1135,219 @@ public class MainActivity extends AppCompatActivity {
     // gesture相关函数
 
     // 切换模式
-    public void StateOnChange(View v){
+    public void StateOnChange(){
         switch (state) {
             case GESTURE_SETUP:
-                state = GESTURE_TEST;
-                changeState.setText("TEST");
-                edit.setVisibility(View.GONE);
-                save.setVisibility(View.GONE);
-                view.setVisibility(View.VISIBLE);
-                gestureName.setVisibility(View.VISIBLE);
-                startTest.setVisibility(View.VISIBLE);
+                setupTip.setVisibility(View.VISIBLE);
+                setupSave.setVisibility(View.VISIBLE);
+                setupLast.setVisibility(View.VISIBLE);
+                setupPlay.setVisibility(View.VISIBLE);
+                setupNext.setVisibility(View.VISIBLE);
+                learnFunction.setVisibility(View.GONE);
+                learnResult.setVisibility(View.GONE);
+                learnLast.setVisibility(View.GONE);
+                learnPlay.setVisibility(View.GONE);
+                learnNext.setVisibility(View.GONE);
+                testTip.setVisibility(View.GONE);
+                testResult.setVisibility(View.GONE);
+                testStart.setVisibility(View.GONE);
+
+                SetEnableRunnable runnableSetup = new SetEnableRunnable(GESTURE_SETUP, qSequentials[setupNumber].runTime);
+                Thread threadSetup = new Thread(runnableSetup);
+                threadSetup.start();
+
+                drawView2.drawNothing();
+                drawFlash.drawTapFlash(setupNumber);
+
+                modeTip.setText("请对第"+ setupNumber + "个功能进行初始设置");
+                setupTip_s.setText(qSequentials[setupNumber].tapName);
                 break;
+
+            case GESTURE_LEARN:
+                setupTip.setVisibility(View.GONE);
+                setupSave.setVisibility(View.GONE);
+                setupLast.setVisibility(View.GONE);
+                setupPlay.setVisibility(View.GONE);
+                setupNext.setVisibility(View.GONE);
+                learnFunction.setVisibility(View.VISIBLE);
+                learnResult.setVisibility(View.VISIBLE);
+                learnLast.setVisibility(View.VISIBLE);
+                learnPlay.setVisibility(View.VISIBLE);
+                learnNext.setVisibility(View.VISIBLE);
+                testTip.setVisibility(View.GONE);
+                testResult.setVisibility(View.GONE);
+                testStart.setVisibility(View.GONE);
+
+                SetEnableRunnable runnableLearn = new SetEnableRunnable(GESTURE_LEARN, qSequentials[learnNumber].runTime);
+                Thread threadLearn = new Thread(runnableLearn);
+                threadLearn.start();
+
+                drawView2.drawNothing();
+                drawFlash.drawTapFlash(learnNumber);
+
+                modeTip.setText("请巩固学习第"+ learnNumber + "个功能");
+                learnFunction.setText(qSequentials[learnNumber].tapName);
+                break;
+
             case GESTURE_TEST:
-                state = GESTURE_SETUP;
-                changeState.setText("SETUP");
-                edit.setVisibility(View.VISIBLE);
-                save.setVisibility(View.VISIBLE);
-                view.setVisibility(View.GONE);
-                gestureName.setVisibility(View.GONE);
-                startTest.setVisibility(View.GONE);
+                setupTip.setVisibility(View.GONE);
+                setupSave.setVisibility(View.GONE);
+                setupLast.setVisibility(View.GONE);
+                setupPlay.setVisibility(View.GONE);
+                setupNext.setVisibility(View.GONE);
+                learnFunction.setVisibility(View.GONE);
+                learnResult.setVisibility(View.GONE);
+                learnLast.setVisibility(View.GONE);
+                learnPlay.setVisibility(View.GONE);
+                learnNext.setVisibility(View.GONE);
+                testTip.setVisibility(View.VISIBLE);
+                testResult.setVisibility(View.VISIBLE);
+                testStart.setVisibility(View.VISIBLE);
+
+                drawView2.drawNothing();
+                drawFlash.drawNothing();
+                modeTip.setText("请开始测试，测试共" + testTime_s + "次");
                 break;
         }
     }
+
+    public void NextClicked(View v){
+        if(state == GESTURE_SETUP){
+            setupNumber = setupNumber + 1;
+            if(setupNumber >= gestureSize){
+                setupNumber = 0;
+            }
+            SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_SETUP, qSequentials[setupNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash2.drawNothing();
+            drawFlash2.drawTapFlash(setupNumber);
+
+            modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
+            setupTip_s.setText(qSequentials[setupNumber].tapName);
+        }
+        else if(state_s == SEQUENTIAL_LEARN){
+            learnNumber = learnNumber + 1;
+            if(learnNumber >= seqSize){
+                learnNumber = 0;
+            }
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(learnNumber);
+
+            modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
+            learnFunction_s.setText(qSequentials[learnNumber].tapName);
+        }
+    }
+
+    public void PlayClicked(View v){
+        if(state_s == SEQUENTIAL_SETUP){
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_SETUP, qSequentials[setupNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(setupNumber);
+        }
+        else if(state_s == SEQUENTIAL_LEARN){
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(learnNumber);
+        }
+    }
+
+    public void LastClicked(View v){
+        if(state_s == SEQUENTIAL_SETUP){
+            setupNumber = setupNumber - 1;
+            if(setupNumber < 0){
+                setupNumber = seqSize - 1;
+            }
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_SETUP, qSequentials[setupNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(setupNumber);
+
+            modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
+            setupTip_s.setText(qSequentials[setupNumber].tapName);
+        }
+        else if(state_s == SEQUENTIAL_LEARN){
+            learnNumber = learnNumber - 1;
+            if(learnNumber < 0){
+                learnNumber = seqSize - 1;
+            }
+            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            drawFlash.drawNothing();
+            drawFlash.drawTapFlash(learnNumber);
+
+            modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
+            learnFunction_s.setText(qSequentials[learnNumber].tapName);
+        }
+    }
+
+    // 保存手势
+    public void SaveClicked(View v){
+        final String name = qSequentials[setupNumber].tapName;
+
+        if(qSequentials[setupNumber].setup){
+            // 已经设置过该gesture
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            //    设置Title的内容
+            builder.setTitle("警告");
+            //    设置Content来显示一个信息
+            builder.setMessage("您已设置过该快捷操作，是否清除并重新设置？");
+            //    设置一个PositiveButton
+            builder.setPositiveButton("是", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    Toast.makeText(MainActivity.this, "已清除", Toast.LENGTH_SHORT).show();
+                    int delNum = 0;
+                    for (int i = 0; i < candidates.size(); i++){
+                        if(name == candidates.get(i).name){
+                            delNum = i;
+                            break;
+                        }
+                    }
+                    candidates.remove(delNum);
+                    qSequentials[setupNumber].setup = false;
+                }
+            });
+            //    设置一个NegativeButton
+            builder.setNegativeButton("否", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    Toast.makeText(MainActivity.this, "未清除", Toast.LENGTH_SHORT).show();
+                }
+            });
+            //    显示出该对话框
+            builder.show();
+        }
+        else{
+            // 还未设置过该seq
+            ArrayList<Point> tmp = new ArrayList();
+            for(int i = 0; i < qmoves.size(); i++){
+                Point p = new Point(qmoves.get(i).x, qmoves.get(i).y);
+                tmp.add(p);
+            }
+            Candidate myCandi = new Candidate(name, tmp);
+            edit.setText("");
+            candidates.add(myCandi);
+            qmoves.clear();
+            drawView2.drawShape(qmoves);
+
+            qSequentials[setupNumber].setup = true;
+        }
+    }
+
 
     // 初始设置
     public ArrayList<Point> SetUpCandi(ArrayList<Point>points){
@@ -1236,62 +1559,6 @@ public class MainActivity extends AppCompatActivity {
         return newPoints;
     }
 
-    // 保存手势
-    public void SaveClicked(View v){
-        String name = edit.getText().toString();
-        if(name.equals("")){
-            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
-            nameNull.setTitle("提示" ) ;
-            nameNull.setMessage("手势名称不可以为空" ) ;
-            nameNull.setPositiveButton("是" ,  null );
-            nameNull.show();
-        }
-        else{
-            if(checkDupli(name, candidates)){
-                ArrayList<Point> tmp = new ArrayList();
-                for(int i = 0; i < qmoves.size(); i++){
-                    Point p = new Point(qmoves.get(i).x, qmoves.get(i).y);
-                    tmp.add(p);
-                }
-                Candidate myCandi = new Candidate(name, tmp);
-                edit.setText("");
-                candidates.add(myCandi);
-                qmoves.clear();
-                drawView2.drawShape(qmoves);
-            }
-            else{
-//                AlertDialog.Builder nameDupli  = new AlertDialog.Builder(MainActivity.this);
-//                nameDupli.setTitle("提示" ) ;
-//                nameDupli.setMessage("手势名称不可以重复" ) ;
-//                nameDupli.setPositiveButton("是" ,  null );
-//                nameDupli.show();
-//                edit.setText("");
-                for(int i = 0; i < candidates.size(); i++){
-                    if(candidates.get(i).name.equals(name)){
-                        ArrayList<Point> tmp = new ArrayList();
-                        for(int j = 0; j < qmoves.size(); j++){
-                            Point p = new Point(qmoves.get(j).x, qmoves.get(j).y);
-                            tmp.add(p);
-                        }
-                        candidates.get(i).points.add(tmp);
-                        edit.setText("");
-                        qmoves.clear();
-                        drawView2.drawShape(qmoves);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    // 检查手势命名重复
-    public boolean checkDupli(String a, ArrayList<Candidate> b){
-        for(int i = 0; i < b.size(); i++){
-            if(b.get(i).name.equals(a)){
-                return false;
-            }
-        }
-        return true;
-    }
 
     // 对比候选项
     public RecognizeResult Recognize(ArrayList<Point> points, ArrayList<Candidate> templates){
