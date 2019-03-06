@@ -43,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     DrawFlash drawFlash2;
 
     TextView view;
-    Button changeState;
-    Button save;
-    EditText edit;
-    TextView gestureName;
-    Button startTest;
+//    Button changeState;
+//    Button save;
+//    EditText edit;
+//    TextView gestureName;
+//    Button startTest;
 
 // seq页面组件
     Spinner changeModeSpinner_s;
@@ -726,7 +726,7 @@ public class MainActivity extends AppCompatActivity {
                                         usedTime = endTime-startTime;
                                         isTesting = false;
                                         testNum = 0;
-                                        startTest.setEnabled(true);
+                                        testStart.setEnabled(true);
                                         //System.out.println("heeeere before the dialog");
                                         AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
                                         nameNull.setTitle("测试已完成" ) ;
@@ -737,7 +737,7 @@ public class MainActivity extends AppCompatActivity {
                                         nameNull.show();
                                     }
                                     else{
-                                        gestureName.setText("请绘制 "+testCase[testNum]);
+                                        testTip.setText("请绘制 "+testCase[testNum]);
                                     }
                                     qmoves.clear();
                                     break;
@@ -1287,84 +1287,84 @@ public class MainActivity extends AppCompatActivity {
             if(setupNumber >= gestureSize){
                 setupNumber = 0;
             }
-            SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_SETUP, qSequentials[setupNumber].runTime);
+            SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_SETUP, qGestures[setupNumber].runTime);
             Thread thread = new Thread(runnable);
             thread.start();
             drawFlash2.drawNothing();
             drawFlash2.drawTapFlash(setupNumber);
 
-            modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
-            setupTip_s.setText(qSequentials[setupNumber].tapName);
+            modeTip.setText("请对第"+ setupNumber + "个功能进行初始设置");
+            setupTip.setText(qGestures[setupNumber].gestureName);
         }
-        else if(state_s == SEQUENTIAL_LEARN){
+        else if(state == GESTURE_LEARN){
             learnNumber = learnNumber + 1;
-            if(learnNumber >= seqSize){
+            if(learnNumber >= gestureSize){
                 learnNumber = 0;
             }
-            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+            SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_LEARN, qGestures[learnNumber].runTime);
             Thread thread = new Thread(runnable);
             thread.start();
-            drawFlash.drawNothing();
-            drawFlash.drawTapFlash(learnNumber);
+            drawFlash2.drawNothing();
+            drawFlash2.drawTapFlash(learnNumber);
 
-            modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
-            learnFunction_s.setText(qSequentials[learnNumber].tapName);
+            modeTip.setText("请巩固学习第"+ learnNumber + "个功能");
+            learnFunction.setText(qGestures[learnNumber].gestureName);
         }
     }
 
     public void PlayClicked(View v){
-        if(state_s == SEQUENTIAL_SETUP){
-            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_SETUP, qSequentials[setupNumber].runTime);
+        if(state == GESTURE_SETUP){
+            SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_SETUP, qGestures[setupNumber].runTime);
             Thread thread = new Thread(runnable);
             thread.start();
-            drawFlash.drawNothing();
-            drawFlash.drawTapFlash(setupNumber);
+            drawFlash2.drawNothing();
+            drawFlash2.drawTapFlash(setupNumber);
         }
-        else if(state_s == SEQUENTIAL_LEARN){
-            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+        else if(state == GESTURE_LEARN){
+            SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_LEARN, qGestures[learnNumber].runTime);
             Thread thread = new Thread(runnable);
             thread.start();
-            drawFlash.drawNothing();
-            drawFlash.drawTapFlash(learnNumber);
+            drawFlash2.drawNothing();
+            drawFlash2.drawTapFlash(learnNumber);
         }
     }
 
     public void LastClicked(View v){
-        if(state_s == SEQUENTIAL_SETUP){
+        if(state == GESTURE_SETUP){
             setupNumber = setupNumber - 1;
             if(setupNumber < 0){
-                setupNumber = seqSize - 1;
+                setupNumber = gestureSize - 1;
             }
-            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_SETUP, qSequentials[setupNumber].runTime);
+            SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_SETUP, qGestures[setupNumber].runTime);
             Thread thread = new Thread(runnable);
             thread.start();
-            drawFlash.drawNothing();
-            drawFlash.drawTapFlash(setupNumber);
+            drawFlash2.drawNothing();
+            drawFlash2.drawTapFlash(setupNumber);
 
-            modeTip_s.setText("请对第"+ setupNumber + "个功能进行初始设置");
-            setupTip_s.setText(qSequentials[setupNumber].tapName);
+            modeTip.setText("请对第"+ setupNumber + "个功能进行初始设置");
+            setupTip.setText(qGestures[setupNumber].gestureName);
         }
-        else if(state_s == SEQUENTIAL_LEARN){
+        else if(state == GESTURE_LEARN){
             learnNumber = learnNumber - 1;
             if(learnNumber < 0){
-                learnNumber = seqSize - 1;
+                learnNumber = gestureSize - 1;
             }
-            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+            SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_LEARN, qGestures[learnNumber].runTime);
             Thread thread = new Thread(runnable);
             thread.start();
-            drawFlash.drawNothing();
-            drawFlash.drawTapFlash(learnNumber);
+            drawFlash2.drawNothing();
+            drawFlash2.drawTapFlash(learnNumber);
 
-            modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
-            learnFunction_s.setText(qSequentials[learnNumber].tapName);
+            modeTip.setText("请巩固学习第"+ learnNumber + "个功能");
+            learnFunction.setText(qGestures[learnNumber].gestureName);
         }
     }
 
     // 保存手势
     public void SaveClicked(View v){
-        final String name = qSequentials[setupNumber].tapName;
+        final String name = qGestures[setupNumber].gestureName;
 
-        if(qSequentials[setupNumber].setup){
+        if(qGestures[setupNumber].setup){
             // 已经设置过该gesture
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             //    设置Title的内容
@@ -1386,7 +1386,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     candidates.remove(delNum);
-                    qSequentials[setupNumber].setup = false;
+                    qGestures[setupNumber].setup = false;
                 }
             });
             //    设置一个NegativeButton
@@ -1409,12 +1409,11 @@ public class MainActivity extends AppCompatActivity {
                 tmp.add(p);
             }
             Candidate myCandi = new Candidate(name, tmp);
-            edit.setText("");
             candidates.add(myCandi);
             qmoves.clear();
             drawView2.drawShape(qmoves);
 
-            qSequentials[setupNumber].setup = true;
+            qGestures[setupNumber].setup = true;
         }
     }
 
@@ -1745,9 +1744,9 @@ public class MainActivity extends AppCompatActivity {
                 testCase[i] = candidates.get(r.nextInt(caseSize)).name;
             }
             startTime = System.currentTimeMillis();
-            gestureName.setText("请绘制 "+testCase[0]);
+            testTip.setText("请绘制 "+testCase[0]);
             isTesting = true;
-            startTest.setEnabled(false);
+            testStart.setEnabled(false);
             for(int i = 0; i < testTime; i++){
                 System.out.println("testCase["+i+"]:"+testCase[i]);
             }
