@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     DrawFlash drawFlash;
     DrawFlash drawFlash2;
 
-    TextView view;
+//    TextView view;
 //    Button changeState;
 //    Button save;
 //    EditText edit;
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     boolean isTesting = false;
-    final int testTime = 50;
+    final int testTime = 10;
     int testNum = 0;
     int rightCaseNum = 0;
     int wrongCaseNum = 0;
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     int learnNumber = 0;
 
     boolean isTesting_s = false;
-    final int testTime_s = 50;
+    final int testTime_s = 10;
     int testNum_s = 0;
     int rightCaseNum_s = 0;
     int wrongCaseNum_s = 0;
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     qSequentials[i].runTime = qSequentials[i].runTime + seqInterval;
                 }
             }
-            qSequentials[i].runTime = qSequentials[i].runTime + 2000;
+            qSequentials[i].runTime = qSequentials[i].runTime + 1000;
         }
     }
     // 初始化gesture序列 gesture功能名称
@@ -205,17 +205,25 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < seqSize; i++){
             qGestures[i] = new QGesture();
         }
-        qGestures[0].qPoints.add(new Point(300,350));
-        qGestures[0].qPoints.add(new Point(400,650));
-        qGestures[0].qPoints.add(new Point(500,350));
-        qGestures[0].qPoints.add(new Point(600,650));
-        qGestures[0].qPoints.add(new Point(700,350));
+        qGestures[0].qPoints.add(new Point(300,400));
+        qGestures[0].qPoints.add(new Point(350,550));
+        qGestures[0].qPoints.add(new Point(400,700));
+        qGestures[0].qPoints.add(new Point(450,550));
+        qGestures[0].qPoints.add(new Point(500,400));
+        qGestures[0].qPoints.add(new Point(550,550));
+        qGestures[0].qPoints.add(new Point(600,700));
+        qGestures[0].qPoints.add(new Point(650,550));
+        qGestures[0].qPoints.add(new Point(700,400));
 
-        qGestures[1].qPoints.add(new Point(300,650));
-        qGestures[1].qPoints.add(new Point(400,350));
-        qGestures[1].qPoints.add(new Point(500,650));
-        qGestures[1].qPoints.add(new Point(600,350));
-        qGestures[1].qPoints.add(new Point(700,650));
+        qGestures[1].qPoints.add(new Point(300,700));
+        qGestures[1].qPoints.add(new Point(350,550));
+        qGestures[1].qPoints.add(new Point(400,400));
+        qGestures[1].qPoints.add(new Point(450,550));
+        qGestures[1].qPoints.add(new Point(500,700));
+        qGestures[1].qPoints.add(new Point(550,550));
+        qGestures[1].qPoints.add(new Point(600,400));
+        qGestures[1].qPoints.add(new Point(650,550));
+        qGestures[1].qPoints.add(new Point(700,700));
 
         qGestures[0].gestureName = "打开微博";
         qGestures[1].gestureName = "打开视频播放器";
@@ -292,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
             if(mode == SEQUENTIAL_SETUP){
                 handler.post(new Runnable(){
                     public void run(){
+                        setupSave_s.setEnabled(false);
                         setupNext_s.setEnabled(false);
                         setupPlay_s.setEnabled(false);
                         setupLast_s.setEnabled(false);
@@ -304,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 handler.post(new Runnable(){
                     public void run(){
+                        setupSave_s.setEnabled(true);
                         setupNext_s.setEnabled(true);
                         setupPlay_s.setEnabled(true);
                         setupLast_s.setEnabled(true);
@@ -334,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
             else if(mode == GESTURE_SETUP){
                 handler.post(new Runnable(){
                     public void run(){
+                        setupSave.setEnabled(false);
                         setupNext.setEnabled(false);
                         setupPlay.setEnabled(false);
                         setupLast.setEnabled(false);
@@ -346,6 +357,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 handler.post(new Runnable(){
                     public void run(){
+                        setupSave.setEnabled(true);
                         setupNext.setEnabled(true);
                         setupPlay.setEnabled(true);
                         setupLast.setEnabled(true);
@@ -698,12 +710,32 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                         }
                         break;
+                    case GESTURE_LEARN:
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                qmoves.clear();
+                                qmoves.add(new Point(x, y));
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                qmoves.add(new Point(x, y));
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                qmoves.add(new Point(x, y));
+                                String a = CompareCandi(qmoves);
+                                if(a == qGestures[learnNumber].gestureName){
+                                    learnResult.setText("敲击正确");
+                                }
+                                else {
+                                    learnResult.setText("敲击错误");
+                                }
+                                break;
+                        }
+                        break;
                     case GESTURE_TEST:
                         if(isTesting){
                             switch (event.getAction()) {
                                 case MotionEvent.ACTION_DOWN:
                                     qmoves.clear();
-                                    view.setText("");
                                     qmoves.add(new Point(x, y));
                                     break;
                                 case MotionEvent.ACTION_MOVE:
@@ -714,20 +746,19 @@ public class MainActivity extends AppCompatActivity {
                                     String a = CompareCandi(qmoves);
                                     if(a == testCase[testNum]){
                                         rightCaseNum = rightCaseNum + 1;
+                                        testResult.setText("绘制正确");
                                     }
                                     else {
                                         wrongCaseNum = wrongCaseNum + 1;
+                                        testResult.setText("绘制错误");
                                     }
                                     testNum = testNum + 1;
-                                   // System.out.println("heeeere "+testNum);
                                     if(testNum == testTime){
-                                        //System.out.println("heeeere testNum=testTime");
                                         endTime = System.currentTimeMillis();
                                         usedTime = endTime-startTime;
                                         isTesting = false;
                                         testNum = 0;
                                         testStart.setEnabled(true);
-                                        //System.out.println("heeeere before the dialog");
                                         AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
                                         nameNull.setTitle("测试已完成" ) ;
                                         nameNull.setMessage("用时"+usedTime+"ms\n"+"正确率"+(double)rightCaseNum/(rightCaseNum+wrongCaseNum) ) ;
@@ -1310,6 +1341,8 @@ public class MainActivity extends AppCompatActivity {
             modeTip.setText("请巩固学习第"+ learnNumber + "个功能");
             learnFunction.setText(qGestures[learnNumber].gestureName);
         }
+        qmoves.clear();
+        drawView2.drawShape(qmoves);
     }
 
     public void PlayClicked(View v){
@@ -1327,6 +1360,8 @@ public class MainActivity extends AppCompatActivity {
             drawFlash2.drawNothing();
             drawFlash2.drawShapeFlash(learnNumber);
         }
+        qmoves.clear();
+        drawView2.drawShape(qmoves);
     }
 
     public void LastClicked(View v){
@@ -1358,6 +1393,8 @@ public class MainActivity extends AppCompatActivity {
             modeTip.setText("请巩固学习第"+ learnNumber + "个功能");
             learnFunction.setText(qGestures[learnNumber].gestureName);
         }
+        qmoves.clear();
+        drawView2.drawShape(qmoves);
     }
 
     // 保存手势
@@ -1634,7 +1671,7 @@ public class MainActivity extends AppCompatActivity {
         RecognizeResult returnResult = new RecognizeResult();
         double b = 1000000;
 
-        drawView2.drawShape(points);
+//        drawView2.drawShape(points);
         for(int i = 0; i < templates.size(); i++){
             for(int j = 0; j < templates.get(i).points.size(); j++){
                 double d = DistanceAtBestAngle(points, i, j,-0.785, 0.785, 0.0349);
@@ -1718,12 +1755,12 @@ public class MainActivity extends AppCompatActivity {
         String a = "";
         ArrayList<Point> newPoints = new ArrayList();
         newPoints = Resample(points, 64);
+        drawView2.drawShape(newPoints);
         newPoints = RotateToZero(newPoints);
         newPoints = ScaleToSquare(newPoints, 400);
         newPoints = TranslateToOrigin(newPoints);
         RecognizeResult result = Recognize(newPoints, candidates);
 
-        view.setText(result.template.name);
         return result.template.name;
     }
 

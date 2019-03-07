@@ -86,24 +86,32 @@ public class DrawFlash extends View {
                     qSequentials[i].runTime = qSequentials[i].runTime + seqInterval;
                 }
             }
-            qSequentials[i].runTime = qSequentials[i].runTime + 2000;
+            qSequentials[i].runTime = qSequentials[i].runTime + 1000;
         }
     }
     public void initialQGesture(){
         for(int i = 0; i < seqSize; i++){
             qGestures[i] = new QGesture();
         }
-        qGestures[0].qPoints.add(new Point(300,350));
-        qGestures[0].qPoints.add(new Point(400,650));
-        qGestures[0].qPoints.add(new Point(500,350));
-        qGestures[0].qPoints.add(new Point(600,650));
-        qGestures[0].qPoints.add(new Point(700,350));
+        qGestures[0].qPoints.add(new Point(300,400));
+        qGestures[0].qPoints.add(new Point(350,550));
+        qGestures[0].qPoints.add(new Point(400,700));
+        qGestures[0].qPoints.add(new Point(450,550));
+        qGestures[0].qPoints.add(new Point(500,400));
+        qGestures[0].qPoints.add(new Point(550,550));
+        qGestures[0].qPoints.add(new Point(600,700));
+        qGestures[0].qPoints.add(new Point(650,550));
+        qGestures[0].qPoints.add(new Point(700,400));
 
-        qGestures[1].qPoints.add(new Point(300,650));
-        qGestures[1].qPoints.add(new Point(400,350));
-        qGestures[1].qPoints.add(new Point(500,650));
-        qGestures[1].qPoints.add(new Point(600,350));
-        qGestures[1].qPoints.add(new Point(700,650));
+        qGestures[1].qPoints.add(new Point(300,700));
+        qGestures[1].qPoints.add(new Point(350,550));
+        qGestures[1].qPoints.add(new Point(400,400));
+        qGestures[1].qPoints.add(new Point(450,550));
+        qGestures[1].qPoints.add(new Point(500,700));
+        qGestures[1].qPoints.add(new Point(550,550));
+        qGestures[1].qPoints.add(new Point(600,400));
+        qGestures[1].qPoints.add(new Point(650,550));
+        qGestures[1].qPoints.add(new Point(700,700));
 
         qGestures[0].gestureName = "打开微博";
         qGestures[1].gestureName = "打开视频播放器";
