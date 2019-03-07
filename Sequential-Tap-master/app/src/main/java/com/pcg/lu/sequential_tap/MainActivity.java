@@ -205,23 +205,23 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < seqSize; i++){
             qGestures[i] = new QGesture();
         }
-        qGestures[0].qPoints.add(new Point(300,200));
-        qGestures[0].qPoints.add(new Point(400,600));
-        qGestures[0].qPoints.add(new Point(500,200));
-        qGestures[0].qPoints.add(new Point(600,600));
-        qGestures[0].qPoints.add(new Point(700,200));
+        qGestures[0].qPoints.add(new Point(300,350));
+        qGestures[0].qPoints.add(new Point(400,650));
+        qGestures[0].qPoints.add(new Point(500,350));
+        qGestures[0].qPoints.add(new Point(600,650));
+        qGestures[0].qPoints.add(new Point(700,350));
 
-        qGestures[1].qPoints.add(new Point(300,600));
-        qGestures[1].qPoints.add(new Point(400,200));
-        qGestures[1].qPoints.add(new Point(500,600));
-        qGestures[1].qPoints.add(new Point(600,200));
-        qGestures[1].qPoints.add(new Point(700,600));
+        qGestures[1].qPoints.add(new Point(300,650));
+        qGestures[1].qPoints.add(new Point(400,350));
+        qGestures[1].qPoints.add(new Point(500,650));
+        qGestures[1].qPoints.add(new Point(600,350));
+        qGestures[1].qPoints.add(new Point(700,650));
 
         qGestures[0].gestureName = "打开微博";
         qGestures[1].gestureName = "打开视频播放器";
 
         for(int i = 0; i < gestureSize; i++){
-            qGestures[i].runTime = qGestures[i].qPoints.size() * 100 + 1000;
+            qGestures[i].runTime = qGestures[i].qPoints.size() * 500 + 1000;
         }
     }
     // 初始化gesture页面组件
@@ -1291,7 +1291,7 @@ public class MainActivity extends AppCompatActivity {
             Thread thread = new Thread(runnable);
             thread.start();
             drawFlash2.drawNothing();
-            drawFlash2.drawTapFlash(setupNumber);
+            drawFlash2.drawShapeFlash(setupNumber);
 
             modeTip.setText("请对第"+ setupNumber + "个功能进行初始设置");
             setupTip.setText(qGestures[setupNumber].gestureName);
@@ -1305,7 +1305,7 @@ public class MainActivity extends AppCompatActivity {
             Thread thread = new Thread(runnable);
             thread.start();
             drawFlash2.drawNothing();
-            drawFlash2.drawTapFlash(learnNumber);
+            drawFlash2.drawShapeFlash(learnNumber);
 
             modeTip.setText("请巩固学习第"+ learnNumber + "个功能");
             learnFunction.setText(qGestures[learnNumber].gestureName);
@@ -1318,14 +1318,14 @@ public class MainActivity extends AppCompatActivity {
             Thread thread = new Thread(runnable);
             thread.start();
             drawFlash2.drawNothing();
-            drawFlash2.drawTapFlash(setupNumber);
+            drawFlash2.drawShapeFlash(setupNumber);
         }
         else if(state == GESTURE_LEARN){
             SetEnableRunnable runnable = new SetEnableRunnable(GESTURE_LEARN, qGestures[learnNumber].runTime);
             Thread thread = new Thread(runnable);
             thread.start();
             drawFlash2.drawNothing();
-            drawFlash2.drawTapFlash(learnNumber);
+            drawFlash2.drawShapeFlash(learnNumber);
         }
     }
 
@@ -1339,7 +1339,7 @@ public class MainActivity extends AppCompatActivity {
             Thread thread = new Thread(runnable);
             thread.start();
             drawFlash2.drawNothing();
-            drawFlash2.drawTapFlash(setupNumber);
+            drawFlash2.drawShapeFlash(setupNumber);
 
             modeTip.setText("请对第"+ setupNumber + "个功能进行初始设置");
             setupTip.setText(qGestures[setupNumber].gestureName);
@@ -1353,7 +1353,7 @@ public class MainActivity extends AppCompatActivity {
             Thread thread = new Thread(runnable);
             thread.start();
             drawFlash2.drawNothing();
-            drawFlash2.drawTapFlash(learnNumber);
+            drawFlash2.drawShapeFlash(learnNumber);
 
             modeTip.setText("请巩固学习第"+ learnNumber + "个功能");
             learnFunction.setText(qGestures[learnNumber].gestureName);

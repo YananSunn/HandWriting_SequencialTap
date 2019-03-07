@@ -35,6 +35,7 @@ public class DrawFlash extends View {
     final long synInterval = 100;
     Paint p_red = new Paint();
     Paint p_blue = new Paint();
+    Paint p_white = new Paint();
 
     TapFlashRunnable tapRunnable = new TapFlashRunnable(0);
     ShapeFlashRunnable shapeRunnable = new ShapeFlashRunnable(0);
@@ -46,6 +47,7 @@ public class DrawFlash extends View {
         p_red.setColor(Color.RED);
         p_red.setStrokeWidth(10);
         p_blue.setColor(Color.BLUE);
+        p_white.setColor(Color.WHITE);
 
         initialQSequential();
         initialQGesture();
@@ -91,23 +93,23 @@ public class DrawFlash extends View {
         for(int i = 0; i < seqSize; i++){
             qGestures[i] = new QGesture();
         }
-        qGestures[0].qPoints.add(new Point(300,200));
-        qGestures[0].qPoints.add(new Point(400,600));
-        qGestures[0].qPoints.add(new Point(500,200));
-        qGestures[0].qPoints.add(new Point(600,600));
-        qGestures[0].qPoints.add(new Point(700,200));
+        qGestures[0].qPoints.add(new Point(300,350));
+        qGestures[0].qPoints.add(new Point(400,650));
+        qGestures[0].qPoints.add(new Point(500,350));
+        qGestures[0].qPoints.add(new Point(600,650));
+        qGestures[0].qPoints.add(new Point(700,350));
 
-        qGestures[1].qPoints.add(new Point(300,600));
-        qGestures[1].qPoints.add(new Point(400,200));
-        qGestures[1].qPoints.add(new Point(500,600));
-        qGestures[1].qPoints.add(new Point(600,200));
-        qGestures[1].qPoints.add(new Point(700,600));
+        qGestures[1].qPoints.add(new Point(300,650));
+        qGestures[1].qPoints.add(new Point(400,350));
+        qGestures[1].qPoints.add(new Point(500,650));
+        qGestures[1].qPoints.add(new Point(600,350));
+        qGestures[1].qPoints.add(new Point(700,650));
 
         qGestures[0].gestureName = "打开微博";
         qGestures[1].gestureName = "打开视频播放器";
 
         for(int i = 0; i < gestureSize; i++){
-            qGestures[i].runTime = qGestures[i].qPoints.size() * 100 + 1000;
+            qGestures[i].runTime = qGestures[i].qPoints.size() * 500 + 1000;
         }
     }
 
@@ -313,43 +315,53 @@ public class DrawFlash extends View {
         }
 
         public void run() {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             while (gestureCounter < qGestures[gestureNum].qPoints.size()) {
-                if(gestureCounter == 0){
-                    handler.post(new Runnable() {
-                        public void run() {
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 50, p_red);
-                            invalidate();
-                        }
-                    });
-                }
-                else if(gestureCounter == qGestures[gestureNum].qPoints.size()){
-                    handler.post(new Runnable() {
-                        public void run() {
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_red);
-                            invalidate();
-                        }
-                    });
-                }
-                else {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 50, p_red);
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_red);
-                            invalidate();
-                        }
-                    });
-                }
-                gestureCounter = gestureCounter + 1;
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                if(gestureCounter == 0){
+                    handler.post(new Runnable() {
+                        public void run() {
+                            System.out.println("heeeere shaperun counter = 0");
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 50, p_red);
+                            invalidate();
+                            gestureCounter = gestureCounter + 1;
+                        }
+                    });
+
+                }
+                else if(gestureCounter == qGestures[gestureNum].qPoints.size()){
+                    handler.post(new Runnable() {
+                        public void run() {
+                            System.out.println("heeeere shaperun counter = size");
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_red);
+                            invalidate();
+                            gestureCounter = gestureCounter + 1;
+                        }
+                    });
+
+                }
+                else {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            System.out.println("heeeere shaperun counter = mid");
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 50, p_red);
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 50, p_white);
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_red);
+                            invalidate();
+                            gestureCounter = gestureCounter + 1;
+                        }
+                    });
+
+                }
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     };
@@ -368,6 +380,7 @@ public class DrawFlash extends View {
         }
         invalidate();
 
+        gestureCounter = 0;
         shapeThread = new Thread(shapeRunnable);
         shapeThread.start();
     }
