@@ -24,14 +24,14 @@ public class DrawFlash extends View {
 
     private static Handler handler=new Handler();
 
-    final int seqSize = 2;
-    final int gestureSize = 2;
+    final int seqSize = 7;
+    final int gestureSize = 7;
 
     int gestureCounter = 0;
     QSequential[] qSequentials = new QSequential[seqSize];
     QGesture[] qGestures = new QGesture[gestureSize];
 
-    final long seqInterval = 500;
+    final long seqInterval = 300;
     final long synInterval = 100;
     Paint p_red = new Paint();
     Paint p_blue = new Paint();
@@ -53,29 +53,67 @@ public class DrawFlash extends View {
         initialQGesture();
     }
     public void initialQSequential(){
-        final long seqInterval = 500;
+        final long seqInterval = 300;
         final long synInterval = 100;
 
         for(int i = 0; i < seqSize; i++){
             qSequentials[i] = new QSequential();
         }
 
-        qSequentials[0].qTaps.add(new QTap(1,1,true));
-        qSequentials[0].qTaps.add(new QTap(1,1,false));
-        qSequentials[0].qTaps.add(new QTap(1,1,true));
-        qSequentials[0].qTaps.add(new QTap(1,1,false));
-//        qSequentials[0].qTaps.add(new QTap(2,2,true));
-//        qSequentials[0].qTaps.add(new QTap(3,3,true));
-//        qSequentials[0].qTaps.add(new QTap(2,5,false));
-//        qSequentials[0].qTaps.add(new QTap(3,6,false));
-
-        qSequentials[1].qTaps.add(new QTap(1,1,true));
-        qSequentials[1].qTaps.add(new QTap(4,2,true));
-        qSequentials[1].qTaps.add(new QTap(1,3,false));
-        qSequentials[1].qTaps.add(new QTap(4,4,false));
-
+        //打开微信 23
         qSequentials[0].tapName = "打开微信";
-        qSequentials[1].tapName = "调整音量";
+        qSequentials[0].qTaps.add(new QTap(1,1,true));
+        qSequentials[0].qTaps.add(new QTap(1,2,false));
+        qSequentials[0].qTaps.add(new QTap(2,3,true));
+        qSequentials[0].qTaps.add(new QTap(2,4,false));
+
+        //打开信息 24
+        qSequentials[1].tapName = "打开信息";
+        qSequentials[1].qTaps.add(new QTap(1,1,true));
+        qSequentials[1].qTaps.add(new QTap(1,2,false));
+        qSequentials[1].qTaps.add(new QTap(3,3,true));
+        qSequentials[1].qTaps.add(new QTap(3,4,false));
+
+        //打开电话 234
+        qSequentials[2].tapName = "打开电话";
+        qSequentials[2].qTaps.add(new QTap(1,1,true));
+        qSequentials[2].qTaps.add(new QTap(1,2,false));
+        qSequentials[2].qTaps.add(new QTap(2,3,true));
+        qSequentials[2].qTaps.add(new QTap(2,4,false));
+        qSequentials[2].qTaps.add(new QTap(3,3,true));
+        qSequentials[2].qTaps.add(new QTap(3,4,false));
+
+        //打开微博 32
+        qSequentials[3].tapName = "打开微博";
+        qSequentials[3].qTaps.add(new QTap(2,1,true));
+        qSequentials[3].qTaps.add(new QTap(2,2,false));
+        qSequentials[3].qTaps.add(new QTap(1,3,true));
+        qSequentials[3].qTaps.add(new QTap(1,4,false));
+
+        //打开音乐播放器 342
+        qSequentials[4].tapName = "打开音乐播放器";
+        qSequentials[4].qTaps.add(new QTap(2,1,true));
+        qSequentials[4].qTaps.add(new QTap(2,2,false));
+        qSequentials[4].qTaps.add(new QTap(3,3,true));
+        qSequentials[4].qTaps.add(new QTap(3,4,false));
+        qSequentials[4].qTaps.add(new QTap(1,5,true));
+        qSequentials[4].qTaps.add(new QTap(1,6,false));
+
+        //打开视频播放器 324
+        qSequentials[5].tapName = "打开视频播放器";
+        qSequentials[5].qTaps.add(new QTap(2,1,true));
+        qSequentials[5].qTaps.add(new QTap(2,2,false));
+        qSequentials[5].qTaps.add(new QTap(1,3,true));
+        qSequentials[5].qTaps.add(new QTap(1,4,false));
+        qSequentials[5].qTaps.add(new QTap(3,3,true));
+        qSequentials[5].qTaps.add(new QTap(3,4,false));
+
+        //打开支付宝 42
+        qSequentials[6].tapName = "打开支付宝";
+        qSequentials[6].qTaps.add(new QTap(3,1,true));
+        qSequentials[6].qTaps.add(new QTap(3,2,false));
+        qSequentials[6].qTaps.add(new QTap(1,3,true));
+        qSequentials[6].qTaps.add(new QTap(1,4,false));
 
         for(int i = 0; i < seqSize; i++){
             for(int j = 0; j < qSequentials[i].qTaps.size() - 1; j++){
@@ -93,6 +131,8 @@ public class DrawFlash extends View {
         for(int i = 0; i < seqSize; i++){
             qGestures[i] = new QGesture();
         }
+        // 打开微信 W
+        qGestures[0].gestureName = "打开微信";
         qGestures[0].qPoints.add(new Point(300,400));
         qGestures[0].qPoints.add(new Point(350,550));
         qGestures[0].qPoints.add(new Point(400,700));
@@ -103,24 +143,96 @@ public class DrawFlash extends View {
         qGestures[0].qPoints.add(new Point(650,550));
         qGestures[0].qPoints.add(new Point(700,400));
 
-        qGestures[1].qPoints.add(new Point(300,700));
-        qGestures[1].qPoints.add(new Point(350,550));
+        // 打开信息 X
+        qGestures[1].gestureName = "打开信息";
         qGestures[1].qPoints.add(new Point(400,400));
-        qGestures[1].qPoints.add(new Point(450,550));
-        qGestures[1].qPoints.add(new Point(500,700));
-        qGestures[1].qPoints.add(new Point(550,550));
+        qGestures[1].qPoints.add(new Point(500,550));
+        qGestures[1].qPoints.add(new Point(600,700));
+        qGestures[1].qPoints.add(new Point(600,550));
         qGestures[1].qPoints.add(new Point(600,400));
-        qGestures[1].qPoints.add(new Point(650,550));
-        qGestures[1].qPoints.add(new Point(700,700));
+        qGestures[1].qPoints.add(new Point(500,550));
+        qGestures[1].qPoints.add(new Point(400,700));
 
-        qGestures[0].gestureName = "打开微博";
-        qGestures[1].gestureName = "打开视频播放器";
+        // 打开电话 D
+        qGestures[2].gestureName = "打开电话";
+        qGestures[2].qPoints.add(new Point(400,700));
+        qGestures[2].qPoints.add(new Point(400,550));
+        qGestures[2].qPoints.add(new Point(400,400));
+
+        qGestures[2].qPoints.add(new Point(460,440));
+        qGestures[2].qPoints.add(new Point(520,480));
+        qGestures[2].qPoints.add(new Point(550,550));
+        qGestures[2].qPoints.add(new Point(520,620));
+        qGestures[2].qPoints.add(new Point(460,660));
+        qGestures[2].qPoints.add(new Point(400,700));
+
+        // 打开微博 椭圆
+        qGestures[3].gestureName = "打开微博";
+        qGestures[3].qPoints.add(new Point(550,400));
+        qGestures[3].qPoints.add(new Point(475,420));
+        qGestures[3].qPoints.add(new Point(400,475));
+        qGestures[3].qPoints.add(new Point(475,530));
+        qGestures[3].qPoints.add(new Point(550,550));
+        qGestures[3].qPoints.add(new Point(625,530));
+        qGestures[3].qPoints.add(new Point(700,475));
+        qGestures[3].qPoints.add(new Point(625,420));
+        qGestures[3].qPoints.add(new Point(550,400));
+
+        // 打开音乐播放器 音符
+        qGestures[4].gestureName = "打开音乐播放器";
+        qGestures[4].qPoints.add(new Point(650,400));
+        qGestures[4].qPoints.add(new Point(600,400));
+        qGestures[4].qPoints.add(new Point(550,400));
+        qGestures[4].qPoints.add(new Point(550,450));
+        qGestures[4].qPoints.add(new Point(550,500));
+        qGestures[4].qPoints.add(new Point(550,550));
+        qGestures[4].qPoints.add(new Point(550,600));
+        qGestures[4].qPoints.add(new Point(550,650));
+        qGestures[4].qPoints.add(new Point(550,700));
+
+        qGestures[4].qPoints.add(new Point(525,690));
+        qGestures[4].qPoints.add(new Point(500,650));
+        qGestures[4].qPoints.add(new Point(525,610));
+        qGestures[4].qPoints.add(new Point(550,600));
+
+
+        // 打开视频播放器 三角
+        qGestures[5].gestureName = "打开视频播放器";
+        qGestures[5].qPoints.add(new Point(450,400));
+        qGestures[5].qPoints.add(new Point(450,550));
+        qGestures[5].qPoints.add(new Point(450,700));
+        qGestures[5].qPoints.add(new Point(550,625));
+        qGestures[5].qPoints.add(new Point(650,550));
+        qGestures[5].qPoints.add(new Point(550,475));
+        qGestures[5].qPoints.add(new Point(450,400));
+
+        // 打开支付宝 S
+        qGestures[6].gestureName = "打开支付宝";
+        qGestures[6].qPoints.add(new Point(650,475));
+        qGestures[6].qPoints.add(new Point(600,420));
+
+        qGestures[6].qPoints.add(new Point(550,400));
+        qGestures[6].qPoints.add(new Point(500,420));
+
+        qGestures[6].qPoints.add(new Point(450,475));
+        qGestures[6].qPoints.add(new Point(500,530));
+
+        qGestures[6].qPoints.add(new Point(550,550));
+
+        qGestures[6].qPoints.add(new Point(600,570));
+        qGestures[6].qPoints.add(new Point(650,625));
+
+        qGestures[6].qPoints.add(new Point(600,680));
+        qGestures[6].qPoints.add(new Point(550,700));
+
+        qGestures[6].qPoints.add(new Point(500,680));
+        qGestures[6].qPoints.add(new Point(450,625));
+
 
         for(int i = 0; i < gestureSize; i++){
             qGestures[i].runTime = qGestures[i].qPoints.size() * 500 + 1000;
         }
     }
-
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -149,7 +261,6 @@ public class DrawFlash extends View {
             while (counter < qSequentials[seqNum].qTaps.size()) {
                 if(Thread.currentThread().isInterrupted())
                 {
-                    System.out.println("heeeere in isinterrupt()");
                     break;
                 }
                 else
@@ -174,7 +285,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[0], fingerY[0], 50, p_red);
-                                        System.out.println("heeeere"+"已经将第0个触点绘制为红色");
                                         invalidate();
                                     }
                                 });
@@ -183,7 +293,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[1], fingerY[1], 50, p_red);
-                                        System.out.println("heeeere"+"已经将第1个触点绘制为红色");
                                         invalidate();
                                     }
                                 });
@@ -192,7 +301,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[2], fingerY[2], 50, p_red);
-                                        System.out.println("heeeere"+"已经将第2个触点绘制为红色");
                                         invalidate();
                                     }
                                 });
@@ -201,7 +309,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[3], fingerY[3], 50, p_red);
-                                        System.out.println("heeeere"+"已经将第3个触点绘制为红色");
                                         invalidate();
                                     }
                                 });
@@ -210,7 +317,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[4], fingerY[4], 50, p_red);
-                                        System.out.println("heeeere"+"已经将第4个触点绘制为红色");
                                         invalidate();
                                     }
                                 });
@@ -224,7 +330,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[0], fingerY[0], 50, p_blue);
-                                        System.out.println("heeeere"+"已经将第0个触点绘制为蓝色");
                                         invalidate();
                                     }
                                 });
@@ -233,7 +338,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[1], fingerY[1], 50, p_blue);
-                                        System.out.println("heeeere"+"已经将第1个触点绘制为蓝色");
                                         invalidate();
                                     }
                                 });
@@ -242,7 +346,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[2], fingerY[2], 50, p_blue);
-                                        System.out.println("heeeere"+"已经将第2个触点绘制为蓝色");
                                         invalidate();
                                     }
                                 });
@@ -251,7 +354,6 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[3], fingerY[3], 50, p_blue);
-                                        System.out.println("heeeere"+"已经将第3个触点绘制为蓝色");
                                         invalidate();
                                     }
                                 });
@@ -260,19 +362,12 @@ public class DrawFlash extends View {
                                 handler.post(new Runnable(){
                                     public void run(){
                                         canvas.drawCircle(fingerX[4], fingerY[4], 50, p_blue);
-                                        System.out.println("heeeere"+"已经将第4个触点绘制为蓝色");
                                         invalidate();
                                     }
                                 });
                                 break;
                         }}
-
                     counter = counter + 1;
-//                if(counter == qSequentials[seqNum].qTaps.size()){
-//                    System.out.println("heeeere"+"试图将counter归零");
-//                    counter = 0;
-//                }
-
                     if(synchron){
                         try {
                             Thread.sleep(synInterval);
@@ -289,7 +384,6 @@ public class DrawFlash extends View {
                     }
                 }
             }
-            System.out.println("heeeere"+"run 运行结束");
         }
     };
 
@@ -333,8 +427,7 @@ public class DrawFlash extends View {
                 if(gestureCounter == 0){
                     handler.post(new Runnable() {
                         public void run() {
-                            System.out.println("heeeere shaperun counter = 0");
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 50, p_red);
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 30, p_red);
                             invalidate();
                             gestureCounter = gestureCounter + 1;
                         }
@@ -344,8 +437,7 @@ public class DrawFlash extends View {
                 else if(gestureCounter == qGestures[gestureNum].qPoints.size()){
                     handler.post(new Runnable() {
                         public void run() {
-                            System.out.println("heeeere shaperun counter = size");
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_red);
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 10, p_red);
                             invalidate();
                             gestureCounter = gestureCounter + 1;
                         }
@@ -355,10 +447,9 @@ public class DrawFlash extends View {
                 else {
                     handler.post(new Runnable() {
                         public void run() {
-                            System.out.println("heeeere shaperun counter = mid");
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 50, p_red);
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 50, p_white);
-                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_red);
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter).x, qGestures[gestureNum].qPoints.get(gestureCounter).y, 30, p_red);
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 30, p_white);
+                            canvas.drawCircle(qGestures[gestureNum].qPoints.get(gestureCounter-1).x, qGestures[gestureNum].qPoints.get(gestureCounter-1).y, 10, p_red);
                             invalidate();
                             gestureCounter = gestureCounter + 1;
                         }
@@ -383,8 +474,7 @@ public class DrawFlash extends View {
         p_blue.setColor(Color.BLUE);
 
         for (int i = 0; i < qGestures[gestureNum].qPoints.size(); i++) {
-            System.out.println("heeeere x:"+ qGestures[gestureNum].qPoints.get(i).x + "y:" + qGestures[gestureNum].qPoints.get(i).y);
-            canvas.drawCircle(qGestures[gestureNum].qPoints.get(i).x , qGestures[gestureNum].qPoints.get(i).y, 30, p_blue);
+            canvas.drawCircle(qGestures[gestureNum].qPoints.get(i).x , qGestures[gestureNum].qPoints.get(i).y, 10, p_blue);
         }
         invalidate();
 

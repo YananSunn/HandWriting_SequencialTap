@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     boolean isTesting = false;
-    final int testTime = 10;
+    final int testTime = 50;
     int testNum = 0;
     int rightCaseNum = 0;
     int wrongCaseNum = 0;
@@ -113,13 +113,13 @@ public class MainActivity extends AppCompatActivity {
     long endTime;
     long usedTime;
 
-    final int seqSize = 2;
-    final int gestureSize = 2;
+    final int seqSize = 7;
+    final int gestureSize = 7;
     int setupNumber = 0;
     int learnNumber = 0;
 
     boolean isTesting_s = false;
-    final int testTime_s = 10;
+    final int testTime_s = 50;
     int testNum_s = 0;
     int rightCaseNum_s = 0;
     int wrongCaseNum_s = 0;
@@ -146,12 +146,14 @@ public class MainActivity extends AppCompatActivity {
 
     Timer idleTimer = null;
 
+    SoundUtils soundUtils = new SoundUtils(this, SoundUtils.RING_SOUND);
+
+
 
 
     // 工具函数
     // 计算绝对值
     public boolean AbsoluteVal(double vala, double valb, double absolute){
-        System.out.println("heeeere a:"+vala+" b:"+valb+" a-b:"+(vala-valb));
         if((vala - valb > 0) && vala - valb < absolute ){
             return true;
         }
@@ -164,29 +166,67 @@ public class MainActivity extends AppCompatActivity {
     }
     // 初始化tap序列 tap功能名称
     public void initialQSequential(){
-        final long seqInterval = 500;
+        final long seqInterval = 300;
         final long synInterval = 100;
 
         for(int i = 0; i < seqSize; i++){
             qSequentials[i] = new QSequential();
         }
 
-        qSequentials[0].qTaps.add(new QTap(1,1,true));
-        qSequentials[0].qTaps.add(new QTap(1,1,false));
-        qSequentials[0].qTaps.add(new QTap(1,1,true));
-        qSequentials[0].qTaps.add(new QTap(1,1,false));
-//        qSequentials[0].qTaps.add(new QTap(2,2,true));
-//        qSequentials[0].qTaps.add(new QTap(3,3,true));
-//        qSequentials[0].qTaps.add(new QTap(2,5,false));
-//        qSequentials[0].qTaps.add(new QTap(3,6,false));
-
-        qSequentials[1].qTaps.add(new QTap(1,1,true));
-        qSequentials[1].qTaps.add(new QTap(4,2,true));
-        qSequentials[1].qTaps.add(new QTap(1,3,false));
-        qSequentials[1].qTaps.add(new QTap(4,4,false));
-
+        //打开微信 23
         qSequentials[0].tapName = "打开微信";
-        qSequentials[1].tapName = "调整音量";
+        qSequentials[0].qTaps.add(new QTap(1,1,true));
+        qSequentials[0].qTaps.add(new QTap(1,2,false));
+        qSequentials[0].qTaps.add(new QTap(2,3,true));
+        qSequentials[0].qTaps.add(new QTap(2,4,false));
+
+        //打开信息 24
+        qSequentials[1].tapName = "打开信息";
+        qSequentials[1].qTaps.add(new QTap(1,1,true));
+        qSequentials[1].qTaps.add(new QTap(1,2,false));
+        qSequentials[1].qTaps.add(new QTap(3,3,true));
+        qSequentials[1].qTaps.add(new QTap(3,4,false));
+
+        //打开电话 234
+        qSequentials[2].tapName = "打开电话";
+        qSequentials[2].qTaps.add(new QTap(1,1,true));
+        qSequentials[2].qTaps.add(new QTap(1,2,false));
+        qSequentials[2].qTaps.add(new QTap(2,3,true));
+        qSequentials[2].qTaps.add(new QTap(2,4,false));
+        qSequentials[2].qTaps.add(new QTap(3,3,true));
+        qSequentials[2].qTaps.add(new QTap(3,4,false));
+
+        //打开微博 32
+        qSequentials[3].tapName = "打开微博";
+        qSequentials[3].qTaps.add(new QTap(2,1,true));
+        qSequentials[3].qTaps.add(new QTap(2,2,false));
+        qSequentials[3].qTaps.add(new QTap(1,3,true));
+        qSequentials[3].qTaps.add(new QTap(1,4,false));
+
+        //打开视频播放器 324
+        qSequentials[4].tapName = "打开视频播放器";
+        qSequentials[4].qTaps.add(new QTap(2,1,true));
+        qSequentials[4].qTaps.add(new QTap(2,2,false));
+        qSequentials[4].qTaps.add(new QTap(1,3,true));
+        qSequentials[4].qTaps.add(new QTap(1,4,false));
+        qSequentials[4].qTaps.add(new QTap(3,3,true));
+        qSequentials[4].qTaps.add(new QTap(3,4,false));
+
+        //打开音乐播放器 432
+        qSequentials[5].tapName = "打开音乐播放器";
+        qSequentials[5].qTaps.add(new QTap(3,1,true));
+        qSequentials[5].qTaps.add(new QTap(3,2,false));
+        qSequentials[5].qTaps.add(new QTap(2,3,true));
+        qSequentials[5].qTaps.add(new QTap(2,4,false));
+        qSequentials[5].qTaps.add(new QTap(1,5,true));
+        qSequentials[5].qTaps.add(new QTap(1,6,false));
+
+        //打开支付宝 42
+        qSequentials[6].tapName = "打开支付宝";
+        qSequentials[6].qTaps.add(new QTap(3,1,true));
+        qSequentials[6].qTaps.add(new QTap(3,2,false));
+        qSequentials[6].qTaps.add(new QTap(1,3,true));
+        qSequentials[6].qTaps.add(new QTap(1,4,false));
 
         for(int i = 0; i < seqSize; i++){
             for(int j = 0; j < qSequentials[i].qTaps.size() - 1; j++){
@@ -205,6 +245,8 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < seqSize; i++){
             qGestures[i] = new QGesture();
         }
+        // 打开微信 W
+        qGestures[0].gestureName = "打开微信";
         qGestures[0].qPoints.add(new Point(300,400));
         qGestures[0].qPoints.add(new Point(350,550));
         qGestures[0].qPoints.add(new Point(400,700));
@@ -215,18 +257,91 @@ public class MainActivity extends AppCompatActivity {
         qGestures[0].qPoints.add(new Point(650,550));
         qGestures[0].qPoints.add(new Point(700,400));
 
-        qGestures[1].qPoints.add(new Point(300,700));
-        qGestures[1].qPoints.add(new Point(350,550));
+        // 打开信息 X
+        qGestures[1].gestureName = "打开信息";
         qGestures[1].qPoints.add(new Point(400,400));
-        qGestures[1].qPoints.add(new Point(450,550));
-        qGestures[1].qPoints.add(new Point(500,700));
-        qGestures[1].qPoints.add(new Point(550,550));
+        qGestures[1].qPoints.add(new Point(500,550));
+        qGestures[1].qPoints.add(new Point(600,700));
+        qGestures[1].qPoints.add(new Point(600,550));
         qGestures[1].qPoints.add(new Point(600,400));
-        qGestures[1].qPoints.add(new Point(650,550));
-        qGestures[1].qPoints.add(new Point(700,700));
+        qGestures[1].qPoints.add(new Point(500,550));
+        qGestures[1].qPoints.add(new Point(400,700));
 
-        qGestures[0].gestureName = "打开微博";
-        qGestures[1].gestureName = "打开视频播放器";
+        // 打开电话 D
+        qGestures[2].gestureName = "打开电话";
+        qGestures[2].qPoints.add(new Point(400,700));
+        qGestures[2].qPoints.add(new Point(400,550));
+        qGestures[2].qPoints.add(new Point(400,400));
+
+        qGestures[2].qPoints.add(new Point(460,440));
+        qGestures[2].qPoints.add(new Point(520,480));
+        qGestures[2].qPoints.add(new Point(550,550));
+        qGestures[2].qPoints.add(new Point(520,620));
+        qGestures[2].qPoints.add(new Point(460,660));
+        qGestures[2].qPoints.add(new Point(400,700));
+
+        // 打开微博 椭圆
+        qGestures[3].gestureName = "打开微博";
+        qGestures[3].qPoints.add(new Point(550,400));
+        qGestures[3].qPoints.add(new Point(475,420));
+        qGestures[3].qPoints.add(new Point(400,475));
+        qGestures[3].qPoints.add(new Point(475,530));
+        qGestures[3].qPoints.add(new Point(550,550));
+        qGestures[3].qPoints.add(new Point(625,530));
+        qGestures[3].qPoints.add(new Point(700,475));
+        qGestures[3].qPoints.add(new Point(625,420));
+        qGestures[3].qPoints.add(new Point(550,400));
+
+        // 打开音乐播放器 音符
+        qGestures[4].gestureName = "打开音乐播放器";
+        qGestures[4].qPoints.add(new Point(650,400));
+        qGestures[4].qPoints.add(new Point(600,400));
+        qGestures[4].qPoints.add(new Point(550,400));
+        qGestures[4].qPoints.add(new Point(550,450));
+        qGestures[4].qPoints.add(new Point(550,500));
+        qGestures[4].qPoints.add(new Point(550,550));
+        qGestures[4].qPoints.add(new Point(550,600));
+        qGestures[4].qPoints.add(new Point(550,650));
+        qGestures[4].qPoints.add(new Point(550,700));
+
+        qGestures[4].qPoints.add(new Point(525,690));
+        qGestures[4].qPoints.add(new Point(500,650));
+        qGestures[4].qPoints.add(new Point(525,610));
+        qGestures[4].qPoints.add(new Point(550,600));
+
+
+        // 打开视频播放器 三角
+        qGestures[5].gestureName = "打开视频播放器";
+        qGestures[5].qPoints.add(new Point(450,400));
+        qGestures[5].qPoints.add(new Point(450,550));
+        qGestures[5].qPoints.add(new Point(450,700));
+        qGestures[5].qPoints.add(new Point(550,625));
+        qGestures[5].qPoints.add(new Point(650,550));
+        qGestures[5].qPoints.add(new Point(550,475));
+        qGestures[5].qPoints.add(new Point(450,400));
+
+        // 打开支付宝 S
+        qGestures[6].gestureName = "打开支付宝";
+        qGestures[6].qPoints.add(new Point(650,475));
+        qGestures[6].qPoints.add(new Point(600,420));
+
+        qGestures[6].qPoints.add(new Point(550,400));
+        qGestures[6].qPoints.add(new Point(500,420));
+
+        qGestures[6].qPoints.add(new Point(450,475));
+        qGestures[6].qPoints.add(new Point(500,530));
+
+        qGestures[6].qPoints.add(new Point(550,550));
+
+        qGestures[6].qPoints.add(new Point(600,570));
+        qGestures[6].qPoints.add(new Point(650,625));
+
+        qGestures[6].qPoints.add(new Point(600,680));
+        qGestures[6].qPoints.add(new Point(550,700));
+
+        qGestures[6].qPoints.add(new Point(500,680));
+        qGestures[6].qPoints.add(new Point(450,625));
+
 
         for(int i = 0; i < gestureSize; i++){
             qGestures[i].runTime = qGestures[i].qPoints.size() * 500 + 1000;
@@ -461,6 +576,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        soundUtils.putSound(0, R.raw.audio0);
+        soundUtils.putSound(1, R.raw.audio1);
+        soundUtils.putSound(2, R.raw.audio2);
+        soundUtils.putSound(3, R.raw.audio3);
+        soundUtils.putSound(4, R.raw.audio4);
+        soundUtils.putSound(5, R.raw.audio5);
+        soundUtils.putSound(6, R.raw.audio6);
+        soundUtils.putSound(7, R.raw.audio7);
+        soundUtils.putSound(8, R.raw.audio8);
+        soundUtils.putSound(9, R.raw.audio9);
     }
 
     // 两种模式切换
@@ -768,6 +894,17 @@ public class MainActivity extends AppCompatActivity {
                                         nameNull.show();
                                     }
                                     else{
+                                        int tmp = testNum;
+                                        int playNumber[] = new int[2];
+                                        if(tmp < 10){
+                                            soundUtils.playSound(tmp,0);
+                                        }
+                                        else{
+                                            playNumber[1] = tmp % 10;
+                                            playNumber[0] = tmp / 10;
+                                            soundUtils.playSound(playNumber[0],0);
+                                            soundUtils.playSound(playNumber[1],0);
+                                        }
                                         testTip.setText("请绘制 "+testCase[testNum]);
                                     }
                                     qmoves.clear();
@@ -967,15 +1104,12 @@ public class MainActivity extends AppCompatActivity {
                             testResult_s.setText("敲击错误");
                         }
                         testNum_s = testNum_s + 1;
-                        //System.out.println("heeeere "+testNum_s);
                         if(testNum_s == testTime_s){
-                            //System.out.println("heeeere testNum_s=testTime_s");
                             endTime_s = System.currentTimeMillis();
                             usedTime_s = endTime_s-startTime_s;
                             isTesting_s = false;
                             testNum_s = 0;
                             testStart_s.setEnabled(true);
-                            //System.out.println("heeeere before the dialog");
                             AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
                             nameNull.setTitle("测试已完成" ) ;
                             nameNull.setMessage("用时"+usedTime_s+"ms\n"+"正确率"+(double)rightCaseNum_s/(rightCaseNum_s+wrongCaseNum_s) ) ;
@@ -985,6 +1119,17 @@ public class MainActivity extends AppCompatActivity {
                             nameNull.show();
                         }
                         else{
+                            int tmp = testNum_s;
+                            int playNumber[] = new int[2];
+                            if(tmp < 10){
+                                soundUtils.playSound(tmp,0);
+                            }
+                            else{
+                                playNumber[1] = tmp % 10;
+                                playNumber[0] = tmp / 10;
+                                soundUtils.playSound(playNumber[0],0);
+                                soundUtils.playSound(playNumber[1],0);
+                            }
                             testTip_s.setText("请敲击 "+testCase_s[testNum_s]);
                         }
                     }
@@ -1005,11 +1150,6 @@ public class MainActivity extends AppCompatActivity {
 
     // 消除敲击先后差异
     public ArrayList<QTouch> clearDiffer(ArrayList<QTouch> qtouches){
-//        for(int i = 0; i < qtouchs_copy.size(); i++){
-//            System.out.println("heeeere "+ "clearDiffer    before qtouchs_copy" + i +":(order,index)");
-//            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
-//            System.out.println("(t0,t1)" + qtouchs_copy.get(i).t0+","+qtouchs_copy.get(i).t1);
-//        }
         Collections.sort(qtouchs_copy, new Comparator<QTouch>() {
             public int compare(QTouch lhs, QTouch rhs) {
                 if ( lhs.t0 > rhs.t0 ) {
@@ -1019,14 +1159,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-//        for(int i = 0; i < qtouchs_copy.size(); i++){
-//            System.out.println("heeeere "+ "clearDiffer    sort qtouchs_copy" + i +":(order,index)");
-//            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
-//            System.out.println("(t0,t1)" + qtouchs_copy.get(i).t0+","+qtouchs_copy.get(i).t1);
-//        }
         for(int i = 0; i < qtouches.size()-1; i++){
             if(AbsoluteVal(qtouches.get(i).t0,qtouches.get(i+1).t0,50)) {
-                //System.out.println("heeeere "+ "change order here1");
                 if(qtouches.get(i).order < qtouches.get(i+1).order){
                     qtouches.get(i+1).order = qtouches.get(i).order;
                 }
@@ -1037,7 +1171,6 @@ public class MainActivity extends AppCompatActivity {
         }
         for(int i = qtouches.size()-1 ; i > 0; i--){
             if(AbsoluteVal(qtouches.get(i).t0,qtouches.get(i-1).t0,50)){
-                //System.out.println("heeeere "+ "change order here2");
                 if(qtouches.get(i).order < qtouches.get(i-1).order){
                     qtouches.get(i-1).order = qtouches.get(i).order;
                 }
@@ -1055,11 +1188,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-//        for(int i = 0; i < qtouchs_copy.size(); i++){
-//            System.out.println("heeeere "+ "clearDiffer    after qtouchs_copy" + i +":(order,index)");
-//            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
-//            System.out.println("(t0,t1)" + qtouchs_copy.get(i).t0+","+qtouchs_copy.get(i).t1);
-//        }
         return qtouches;
     }
 
@@ -1119,35 +1247,23 @@ public class MainActivity extends AppCompatActivity {
             Candidate_s myCandi = new Candidate_s(name, tmp);
             candidates_s.add(myCandi);
             qSequentials[setupNumber].setup = true;
+
+            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+            nameNull.setTitle("成功" ) ;
+            nameNull.setMessage("已成功保存") ;
+            nameNull.setPositiveButton("ok" ,  null );
+            nameNull.show();
         }
     }
 
     // 对比候选项
     public String CompareCandi_s(){
-        System.out.println("heeeere"+"comparecandi_s");
         boolean isFound = false;
-//        for(int i = 0; i < candidates_s.size(); i++){
-//            for(int j = 0; j < candidates_s.get(i).touchs.size(); j++){
-//                for(int k = 0; k < candidates_s.get(i).touchs.get(j).size(); k++){
-//                    System.out.println("heeeere"+i + "," + j + ","+ k +":(t0, t1)");
-//                    System.out.println(candidates_s.get(i).touchs.get(j).get(k).t0 + "," +candidates_s.get(i).touchs.get(j).get(k).t1);
-//                    System.out.println("(order,index)"+candidates_s.get(i).touchs.get(j).get(k).order + "," +candidates_s.get(i).touchs.get(j).get(k).index);
-//                }
-//            }
-//        }
-
         qtouchs_copy = clearDiffer(qtouchs_copy);
-
-//        for(int i = 0; i < qtouchs_copy.size(); i++){
-//            System.out.println("heeeere"+ "qtouchs_copy" + i +":(order,index)");
-//            System.out.println(qtouchs_copy.get(i).order+","+qtouchs_copy.get(i).index);
-//        }
 
         for(int i = 0; i < candidates_s.size(); i++){
             for(int j = 0; j < candidates_s.get(i).touchs.size(); j++){
-                System.out.println(candidates_s.get(i).name);
                 if(isFound == true){
-                    System.out.println("isFound");
                     if(j == 0){
                         learnResult_s.setText(candidates_s.get(i-1).name);
                         return candidates_s.get(i-1).name;
@@ -1161,19 +1277,11 @@ public class MainActivity extends AppCompatActivity {
                 isFound = true;
                 if(candidates_s.get(i).touchs.get(j).size() == qtouchs_copy.size()){
                     for(int k = 0; k < qtouchs_copy.size()-1; k++){
-                        System.out.println(candidates_s.get(i).touchs.get(j).get(k).index);
-                        System.out.println(qtouchs_copy.get(k).index);
-                        System.out.println(candidates_s.get(i).touchs.get(j).get(k).order);
-                        System.out.println(qtouchs_copy.get(k).order);
-
                         if(candidates_s.get(i).touchs.get(j).get(k).index == qtouchs_copy.get(k).index
                                 && candidates_s.get(i).touchs.get(j).get(k).order == qtouchs_copy.get(k).order
                                 && AbsoluteVal((Math.pow(candidates_s.get(i).touchs.get(j).get(k).x - candidates_s.get(i).touchs.get(j).get(k+1).x, 2) + Math.pow(candidates_s.get(i).touchs.get(j).get(k).y - candidates_s.get(i).touchs.get(j).get(k+1).y, 2)),
                                 (Math.pow(qtouchs_copy.get(k).x - qtouchs_copy.get(k+1).x, 2) + Math.pow(qtouchs_copy.get(k).y - qtouchs_copy.get(k+1).y, 2)),
                                 200000) ){
-                            System.out.println(candidates_s.size());
-                            System.out.println(candidates_s.get(i).touchs.get(j).size());
-                            System.out.println(isFound);
                             continue;
                         }
                         else {
@@ -1221,14 +1329,19 @@ public class MainActivity extends AppCompatActivity {
             for(int i = 0; i < testTime_s; i++){
                 testCase_s[i] = candidates_s.get(r.nextInt(caseSize)).name;
             }
+            System.out.println("Tip 待测试sequential序列：");
+            for(int i = 0; i < testTime_s; i++){
+                System.out.println("Tip "+ i + ": "+ testCase_s[i]);
+            }
+
             startTime_s = System.currentTimeMillis();
+            soundUtils.playSound(0,0);
             testTip_s.setText("请敲击 "+testCase_s[0]);
             isTesting_s = true;
             testStart_s.setEnabled(false);
-            for(int i = 0; i < testTime_s; i++){
-                System.out.println("testCase_s["+i+"]:"+testCase_s[i]);
-            }
         }
+
+
     }
 
 
@@ -1451,6 +1564,12 @@ public class MainActivity extends AppCompatActivity {
             drawView2.drawShape(qmoves);
 
             qGestures[setupNumber].setup = true;
+
+            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+            nameNull.setTitle("成功" ) ;
+            nameNull.setMessage("已成功保存") ;
+            nameNull.setPositiveButton("ok" ,  null );
+            nameNull.show();
         }
     }
 
@@ -1780,13 +1899,17 @@ public class MainActivity extends AppCompatActivity {
             for(int i = 0; i < testTime; i++){
                 testCase[i] = candidates.get(r.nextInt(caseSize)).name;
             }
+
+            System.out.println("Tip 待测试gesture序列：");
+            for(int i = 0; i < testTime; i++){
+                System.out.println("Tip "+ i + ": "+ testCase[i]);
+            }
             startTime = System.currentTimeMillis();
+
+            soundUtils.playSound(0,0);
             testTip.setText("请绘制 "+testCase[0]);
             isTesting = true;
             testStart.setEnabled(false);
-            for(int i = 0; i < testTime; i++){
-                System.out.println("testCase["+i+"]:"+testCase[i]);
-            }
         }
     }
 }

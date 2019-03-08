@@ -46,11 +46,6 @@ class DrawView extends View {
             int y = (qtouch.order + 1) * 100;
             canvas.drawLine(qtouch.l * 1000f + 100f, y+800, qtouch.r * 1000 + 100, y+800, p_red);
             canvas.drawCircle(qtouch.x, qtouch.y - 250, 10, p_blue);
-
-//            System.out.println("order:" + qtouch.order);
-//            System.out.println("index:" + qtouch.index);
-//            System.out.println("l:" + qtouch.l);
-//            System.out.println("r:" + qtouch.r);
         }
 
         invalidate();
