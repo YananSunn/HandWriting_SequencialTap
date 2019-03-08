@@ -90,23 +90,23 @@ public class DrawFlash extends View {
         qSequentials[3].qTaps.add(new QTap(1,3,true));
         qSequentials[3].qTaps.add(new QTap(1,4,false));
 
-        //打开音乐播放器 342
-        qSequentials[4].tapName = "打开音乐播放器";
+        //打开视频播放器 324
+        qSequentials[4].tapName = "打开视频播放器";
         qSequentials[4].qTaps.add(new QTap(2,1,true));
         qSequentials[4].qTaps.add(new QTap(2,2,false));
+        qSequentials[4].qTaps.add(new QTap(1,3,true));
+        qSequentials[4].qTaps.add(new QTap(1,4,false));
         qSequentials[4].qTaps.add(new QTap(3,3,true));
         qSequentials[4].qTaps.add(new QTap(3,4,false));
-        qSequentials[4].qTaps.add(new QTap(1,5,true));
-        qSequentials[4].qTaps.add(new QTap(1,6,false));
 
-        //打开视频播放器 324
-        qSequentials[5].tapName = "打开视频播放器";
-        qSequentials[5].qTaps.add(new QTap(2,1,true));
-        qSequentials[5].qTaps.add(new QTap(2,2,false));
-        qSequentials[5].qTaps.add(new QTap(1,3,true));
-        qSequentials[5].qTaps.add(new QTap(1,4,false));
-        qSequentials[5].qTaps.add(new QTap(3,3,true));
-        qSequentials[5].qTaps.add(new QTap(3,4,false));
+        //打开音乐播放器 432
+        qSequentials[5].tapName = "打开音乐播放器";
+        qSequentials[5].qTaps.add(new QTap(3,1,true));
+        qSequentials[5].qTaps.add(new QTap(3,2,false));
+        qSequentials[5].qTaps.add(new QTap(2,3,true));
+        qSequentials[5].qTaps.add(new QTap(2,4,false));
+        qSequentials[5].qTaps.add(new QTap(1,5,true));
+        qSequentials[5].qTaps.add(new QTap(1,6,false));
 
         //打开支付宝 42
         qSequentials[6].tapName = "打开支付宝";
@@ -230,7 +230,7 @@ public class DrawFlash extends View {
 
 
         for(int i = 0; i < gestureSize; i++){
-            qGestures[i].runTime = qGestures[i].qPoints.size() * 500 + 1000;
+            qGestures[i].runTime = qGestures[i].qPoints.size() * 200 + 1000;
         }
     }
 
@@ -420,7 +420,7 @@ public class DrawFlash extends View {
 
             while (gestureCounter < qGestures[gestureNum].qPoints.size()) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -458,7 +458,7 @@ public class DrawFlash extends View {
                 }
             }
             try {
-                Thread.sleep(500);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

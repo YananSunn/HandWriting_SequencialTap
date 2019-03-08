@@ -1,11 +1,13 @@
 package com.pcg.lu.sequential_tap;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +18,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -137,9 +142,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Point> qmoves = new ArrayList();
     ArrayList<Candidate> candidates = new ArrayList();
     ArrayList<Candidate_s> candidates_s = new ArrayList();
-
-//    ArrayList<QTap>[] qtaps = new ArrayList[seqSize];
-//    ArrayList<String> tapNames = new ArrayList();
 
     QSequential[] qSequentials = new QSequential[seqSize];
     QGesture[] qGestures = new QGesture[gestureSize];
@@ -344,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         for(int i = 0; i < gestureSize; i++){
-            qGestures[i].runTime = qGestures[i].qPoints.size() * 500 + 1000;
+            qGestures[i].runTime = qGestures[i].qPoints.size() * 200 + 1000;
         }
     }
     // 初始化gesture页面组件
@@ -384,10 +386,56 @@ public class MainActivity extends AppCompatActivity {
                         state = GESTURE_SETUP;
                         break;
                     case 1:
-                        state = GESTURE_LEARN;
+                        if(candidates.size() != gestureSize){
+                            int minus = gestureSize - candidates.size();
+                            int vacant[] = new int[minus];
+                            int flag = 0;
+                            for(int i = 0; i < gestureSize; i++){
+                                if(qGestures[i].setup == false){
+                                    vacant[flag] = i;
+                                    flag ++;
+                                }
+                            }
+                            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+                            nameNull.setTitle("失败" ) ;
+                            String tip = "仍有"+ minus + "个手势未设置，分别为";
+                            for(int i = 0; i < minus; i++){
+                                tip = tip + vacant[i] + ",";
+                            }
+                            nameNull.setMessage(tip) ;
+                            nameNull.setPositiveButton("ok" ,  null );
+                            nameNull.show();
+                            state = GESTURE_SETUP;
+                        }
+                        else{
+                            state = GESTURE_LEARN;
+                        }
                         break;
                     case 2:
-                        state = GESTURE_TEST;
+                        if(candidates.size() != gestureSize){
+                            int minus = gestureSize - candidates.size();
+                            int vacant[] = new int[minus];
+                            int flag = 0;
+                            for(int i = 0; i < gestureSize; i++){
+                                if(qGestures[i].setup == false){
+                                    vacant[flag] = i;
+                                    flag ++;
+                                }
+                            }
+                            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+                            nameNull.setTitle("失败" ) ;
+                            String tip = "仍有"+ minus + "个手势未设置，分别为";
+                            for(int i = 0; i < minus; i++){
+                                tip = tip + vacant[i] + ",";
+                            }
+                            nameNull.setMessage(tip) ;
+                            nameNull.setPositiveButton("ok" ,  null );
+                            nameNull.show();
+                            state = GESTURE_SETUP;
+                        }
+                        else{
+                            state = GESTURE_TEST;
+                        }
                         break;
                 }
                 StateOnChange();
@@ -563,10 +611,57 @@ public class MainActivity extends AppCompatActivity {
                         state_s = SEQUENTIAL_SETUP;
                         break;
                     case 1:
+//                        if(candidates_s.size() != seqSize){
+//                            int minus = seqSize - candidates_s.size();
+//                            int vacant[] = new int[minus];
+//                            int flag = 0;
+//                            for(int i = 0; i < seqSize; i++){
+//                                if(qSequentials[i].setup == false){
+//                                    vacant[flag] = i;
+//                                    flag ++;
+//                                }
+//                            }
+//                            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+//                            nameNull.setTitle("失败" ) ;
+//                            String tip = "仍有"+ minus + "个手势未设置，分别为";
+//                            for(int i = 0; i < minus; i++){
+//                                tip = tip + vacant[i] + ",";
+//                            }
+//                            nameNull.setMessage(tip) ;
+//                            nameNull.setPositiveButton("ok" ,  null );
+//                            nameNull.show();
+//                            state_s = SEQUENTIAL_SETUP;
+//                        }
+//                        else{
+//                            state_s = SEQUENTIAL_LEARN;
+//                        }
                         state_s = SEQUENTIAL_LEARN;
                         break;
                     case 2:
-                        state_s = SEQUENTIAL_TEST;
+                        if(candidates_s.size() != seqSize){
+                            int minus = seqSize - candidates_s.size();
+                            int vacant[] = new int[minus];
+                            int flag = 0;
+                            for(int i = 0; i < seqSize; i++){
+                                if(qSequentials[i].setup == false){
+                                    vacant[flag] = i;
+                                    flag ++;
+                                }
+                            }
+                            AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+                            nameNull.setTitle("失败" ) ;
+                            String tip = "仍有"+ minus + "个手势未设置，分别为";
+                            for(int i = 0; i < minus; i++){
+                                tip = tip + vacant[i] + ",";
+                            }
+                            nameNull.setMessage(tip) ;
+                            nameNull.setPositiveButton("ok" ,  null );
+                            nameNull.show();
+                            state_s = SEQUENTIAL_SETUP;
+                        }
+                        else{
+                            state_s = SEQUENTIAL_TEST;
+                        }
                         break;
                 }
                 StateOnChange_s();
@@ -653,10 +748,56 @@ public class MainActivity extends AppCompatActivity {
                                 state = GESTURE_SETUP;
                                 break;
                             case 1:
-                                state = GESTURE_LEARN;
+                                if(candidates.size() != gestureSize){
+                                    int minus = gestureSize - candidates.size();
+                                    int vacant[] = new int[minus];
+                                    int flag = 0;
+                                    for(int i = 0; i < gestureSize; i++){
+                                        if(qGestures[i].setup == false){
+                                            vacant[flag] = i;
+                                            flag ++;
+                                        }
+                                    }
+                                    AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+                                    nameNull.setTitle("失败" ) ;
+                                    String tip = "仍有"+ minus + "个手势未设置，分别为";
+                                    for(int i = 0; i < minus; i++){
+                                        tip = tip + vacant[i] + ",";
+                                    }
+                                    nameNull.setMessage(tip) ;
+                                    nameNull.setPositiveButton("ok" ,  null );
+                                    nameNull.show();
+                                    state = GESTURE_SETUP;
+                                }
+                                else{
+                                    state = GESTURE_LEARN;
+                                }
                                 break;
                             case 2:
-                                state = GESTURE_TEST;
+                                if(candidates.size() != gestureSize){
+                                    int minus = gestureSize - candidates.size();
+                                    int vacant[] = new int[minus];
+                                    int flag = 0;
+                                    for(int i = 0; i < gestureSize; i++){
+                                        if(qGestures[i].setup == false){
+                                            vacant[flag] = i;
+                                            flag ++;
+                                        }
+                                    }
+                                    AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+                                    nameNull.setTitle("失败" ) ;
+                                    String tip = "仍有"+ minus + "个手势未设置，分别为";
+                                    for(int i = 0; i < minus; i++){
+                                        tip = tip + vacant[i] + ",";
+                                    }
+                                    nameNull.setMessage(tip) ;
+                                    nameNull.setPositiveButton("ok" ,  null );
+                                    nameNull.show();
+                                    state = GESTURE_SETUP;
+                                }
+                                else{
+                                    state = GESTURE_TEST;
+                                }
                                 break;
                         }
                         StateOnChange();
@@ -727,10 +868,56 @@ public class MainActivity extends AppCompatActivity {
                                 state_s = SEQUENTIAL_SETUP;
                                 break;
                             case 1:
-                                state_s = SEQUENTIAL_LEARN;
+                                if(candidates_s.size() != seqSize){
+                                    int minus = seqSize - candidates_s.size();
+                                    int vacant[] = new int[minus];
+                                    int flag = 0;
+                                    for(int i = 0; i < seqSize; i++){
+                                        if(qSequentials[i].setup == false){
+                                            vacant[flag] = i;
+                                            flag ++;
+                                        }
+                                    }
+                                    AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+                                    nameNull.setTitle("失败" ) ;
+                                    String tip = "仍有"+ minus + "个手势未设置，分别为";
+                                    for(int i = 0; i < minus; i++){
+                                        tip = tip + vacant[i] + ",";
+                                    }
+                                    nameNull.setMessage(tip) ;
+                                    nameNull.setPositiveButton("ok" ,  null );
+                                    nameNull.show();
+                                    state_s = SEQUENTIAL_SETUP;
+                                }
+                                else{
+                                    state_s = SEQUENTIAL_LEARN;
+                                }
                                 break;
                             case 2:
-                                state_s = SEQUENTIAL_TEST;
+                                if(candidates_s.size() != seqSize){
+                                    int minus = seqSize - candidates_s.size();
+                                    int vacant[] = new int[minus];
+                                    int flag = 0;
+                                    for(int i = 0; i < seqSize; i++){
+                                        if(qSequentials[i].setup == false){
+                                            vacant[flag] = i;
+                                            flag ++;
+                                        }
+                                    }
+                                    AlertDialog.Builder nameNull  = new AlertDialog.Builder(MainActivity.this);
+                                    nameNull.setTitle("失败" ) ;
+                                    String tip = "仍有"+ minus + "个手势未设置，分别为";
+                                    for(int i = 0; i < minus; i++){
+                                        tip = tip + vacant[i] + ",";
+                                    }
+                                    nameNull.setMessage(tip) ;
+                                    nameNull.setPositiveButton("ok" ,  null );
+                                    nameNull.show();
+                                    state_s = SEQUENTIAL_SETUP;
+                                }
+                                else{
+                                    state_s = SEQUENTIAL_TEST;
+                                }
                                 break;
                         }
                         StateOnChange_s();
@@ -998,7 +1185,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void NextClicked_s(View v){
+        writeTxtToFile("next is clicked", "/storage/emulated/0/Android/data/com.pcg.lu.sequential_tap/files/Download", "test.txt");
         if(state_s == SEQUENTIAL_SETUP){
+            qtouchs.clear();
+            drawView.drawNothing();
             setupNumber = setupNumber + 1;
             if(setupNumber >= seqSize){
                 setupNumber = 0;
@@ -1013,6 +1203,8 @@ public class MainActivity extends AppCompatActivity {
             setupTip_s.setText(qSequentials[setupNumber].tapName);
         }
         else if(state_s == SEQUENTIAL_LEARN){
+            qtouchs.clear();
+            drawView.drawNothing();
             learnNumber = learnNumber + 1;
             if(learnNumber >= seqSize){
                 learnNumber = 0;
@@ -1026,6 +1218,8 @@ public class MainActivity extends AppCompatActivity {
             modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
             learnFunction_s.setText(qSequentials[learnNumber].tapName);
         }
+
+
     }
 
     public void PlayClicked_s(View v){
@@ -1047,6 +1241,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void LastClicked_s(View v){
         if(state_s == SEQUENTIAL_SETUP){
+            qtouchs.clear();
+            drawView.drawNothing();
             setupNumber = setupNumber - 1;
             if(setupNumber < 0){
                 setupNumber = seqSize - 1;
@@ -1061,6 +1257,8 @@ public class MainActivity extends AppCompatActivity {
             setupTip_s.setText(qSequentials[setupNumber].tapName);
         }
         else if(state_s == SEQUENTIAL_LEARN){
+            qtouchs.clear();
+            drawView.drawNothing();
             learnNumber = learnNumber - 1;
             if(learnNumber < 0){
                 learnNumber = seqSize - 1;
@@ -1092,6 +1290,11 @@ public class MainActivity extends AppCompatActivity {
                         p.order = qtouchs.get(i).order;
                         p.index = qtouchs.get(i).index;
                         qtouchs_copy.add(p);
+                    }
+
+                    if(state_s == SEQUENTIAL_SETUP && (setupNumber == 0 || setupNumber == 1)){
+                        System.out.println("heeeere setupnumber:"+setupNumber+" pow:" + (Math.pow(qtouchs_copy.get(0).x - qtouchs_copy.get(0+1).x, 2)
+                                + Math.pow(qtouchs_copy.get(0).y - qtouchs_copy.get(0+1).y, 2)));
                     }
                     if(page == VIEW_SEQUENTIAL && state_s == SEQUENTIAL_TEST && isTesting_s){
                         String a = CompareCandi_s();
@@ -1160,7 +1363,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         for(int i = 0; i < qtouches.size()-1; i++){
-            if(AbsoluteVal(qtouches.get(i).t0,qtouches.get(i+1).t0,50)) {
+            if(AbsoluteVal(qtouches.get(i).t0,qtouches.get(i+1).t0,20)) {
                 if(qtouches.get(i).order < qtouches.get(i+1).order){
                     qtouches.get(i+1).order = qtouches.get(i).order;
                 }
@@ -1170,7 +1373,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         for(int i = qtouches.size()-1 ; i > 0; i--){
-            if(AbsoluteVal(qtouches.get(i).t0,qtouches.get(i-1).t0,50)){
+            if(AbsoluteVal(qtouches.get(i).t0,qtouches.get(i-1).t0,20)){
                 if(qtouches.get(i).order < qtouches.get(i-1).order){
                     qtouches.get(i-1).order = qtouches.get(i).order;
                 }
@@ -1217,7 +1420,20 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     candidates_s.remove(delNum);
-                    qSequentials[setupNumber].setup = false;
+
+                    ArrayList<QTouch> tmp = new ArrayList();
+                    for(int i = 0; i < qtouchs_copy.size(); i++){
+                        qtouchs_copy = clearDiffer(qtouchs_copy);
+                        QTouch p = new QTouch(qtouchs_copy.get(i).x, qtouchs_copy.get(i).y, qtouchs_copy.get(i).t0, qtouchs_copy.get(i).t1);
+                        p.l = qtouchs_copy.get(i).l;
+                        p.r = qtouchs_copy.get(i).r;
+                        p.order = qtouchs_copy.get(i).order;
+                        p.index = qtouchs_copy.get(i).index;
+                        tmp.add(p);
+                    }
+                    Candidate_s myCandi = new Candidate_s(name, tmp);
+                    candidates_s.add(myCandi);
+                    qSequentials[setupNumber].setup = true;
                 }
             });
             //    设置一个NegativeButton
@@ -1279,9 +1495,12 @@ public class MainActivity extends AppCompatActivity {
                     for(int k = 0; k < qtouchs_copy.size()-1; k++){
                         if(candidates_s.get(i).touchs.get(j).get(k).index == qtouchs_copy.get(k).index
                                 && candidates_s.get(i).touchs.get(j).get(k).order == qtouchs_copy.get(k).order
-                                && AbsoluteVal((Math.pow(candidates_s.get(i).touchs.get(j).get(k).x - candidates_s.get(i).touchs.get(j).get(k+1).x, 2) + Math.pow(candidates_s.get(i).touchs.get(j).get(k).y - candidates_s.get(i).touchs.get(j).get(k+1).y, 2)),
-                                (Math.pow(qtouchs_copy.get(k).x - qtouchs_copy.get(k+1).x, 2) + Math.pow(qtouchs_copy.get(k).y - qtouchs_copy.get(k+1).y, 2)),
-                                200000) ){
+                                && AbsoluteVal(
+                                        (Math.pow(candidates_s.get(i).touchs.get(j).get(k).x - candidates_s.get(i).touchs.get(j).get(k+1).x, 2)
+                                                + Math.pow(candidates_s.get(i).touchs.get(j).get(k).y - candidates_s.get(i).touchs.get(j).get(k+1).y, 2)),
+                                        (Math.pow(qtouchs_copy.get(k).x - qtouchs_copy.get(k+1).x, 2)
+                                                + Math.pow(qtouchs_copy.get(k).y - qtouchs_copy.get(k+1).y, 2)),
+                                100000) ){
                             continue;
                         }
                         else {
@@ -1335,6 +1554,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             startTime_s = System.currentTimeMillis();
+//            saveInternal(Long.toString(startTime_s), "this is a test");
             soundUtils.playSound(0,0);
             testTip_s.setText("请敲击 "+testCase_s[0]);
             isTesting_s = true;
@@ -1536,7 +1756,17 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     candidates.remove(delNum);
-                    qGestures[setupNumber].setup = false;
+
+                    ArrayList<Point> tmp = new ArrayList();
+                    for(int i = 0; i < qmoves.size(); i++){
+                        Point p = new Point(qmoves.get(i).x, qmoves.get(i).y);
+                        tmp.add(p);
+                    }
+                    Candidate myCandi = new Candidate(name, tmp);
+                    candidates.add(myCandi);
+                    qmoves.clear();
+                    drawView2.drawShape(qmoves);
+                    qGestures[setupNumber].setup = true;
                 }
             });
             //    设置一个NegativeButton
@@ -1912,4 +2142,76 @@ public class MainActivity extends AppCompatActivity {
             testStart.setEnabled(false);
         }
     }
+
+//    public void saveInternal(String filename, String data) {
+//        FileOutputStream outputStream;
+//        try {
+//            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+//            outputStream.write(data.getBytes("utf-8"));
+//            outputStream.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    public void writeTxtToFile(String strcontent, String filePath, String fileName) {
+        //生成文件夹之后，再生成文件，不然会出错
+        makeFilePath(filePath, fileName);
+
+        String strFilePath = filePath + fileName;
+        // 每次写入时，都换行写
+        String strContent = strcontent + "\r\n";
+        try {
+            File file = new File(strFilePath);
+            if (!file.exists()) {
+                Log.d("TestFile", "Create the file:" + strFilePath);
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+            RandomAccessFile raf = new RandomAccessFile(file, "rwd");
+            raf.seek(file.length());
+            raf.write(strContent.getBytes());
+            raf.close();
+        } catch (Exception e) {
+            Log.e("TestFile", "Error on write File:" + e);
+        }
+    }
+
+    // 生成文件
+    public File makeFilePath(String filePath, String fileName) {
+        File file = null;
+        makeRootDirectory(filePath);
+        try {
+            file = new File(filePath + fileName);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    // 生成文件夹
+    public static void makeRootDirectory(String filePath) {
+        File file = null;
+        try {
+            file = new File(filePath);
+            if (!file.exists()) {
+                file.mkdir();
+            }
+        } catch (Exception e) {
+            Log.i("error:", e + "");
+        }
+    }
+
+    //删除指定txt文件   通过路径
+    public void deleteFile(String filePath, String fileName) {
+        File f = new File(filePath + fileName);  // 输入要删除的文件位置
+        if (f.exists()) {
+            f.delete();
+        }
+
+    }
+
 }
