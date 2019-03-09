@@ -13,8 +13,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,10 +73,14 @@ public class MainActivity extends AppCompatActivity {
     Button learnPlay_s;
     Button learnLast_s;
     Button learnNext_s;
+    Switch learnSwitch_s;
+    TextView learnSwitchTip_s;
 
     TextView testTip_s;
     TextView testResult_s;
     Button testStart_s;
+
+    boolean showTipFlash_s = true;
 
 
 // gesture页面组件
@@ -467,6 +473,7 @@ public class MainActivity extends AppCompatActivity {
                         setupNext_s.setEnabled(false);
                         setupPlay_s.setEnabled(false);
                         setupLast_s.setEnabled(false);
+                        changeModeSpinner_s.setEnabled(false);
                     }
                 });
                 try {
@@ -480,6 +487,7 @@ public class MainActivity extends AppCompatActivity {
                         setupNext_s.setEnabled(true);
                         setupPlay_s.setEnabled(true);
                         setupLast_s.setEnabled(true);
+                        changeModeSpinner_s.setEnabled(true);
                     }
                 });
             }
@@ -489,6 +497,7 @@ public class MainActivity extends AppCompatActivity {
                         learnNext_s.setEnabled(false);
                         learnPlay_s.setEnabled(false);
                         learnLast_s.setEnabled(false);
+                        changeModeSpinner_s.setEnabled(false);
                     }
                 });
                 try {
@@ -501,6 +510,7 @@ public class MainActivity extends AppCompatActivity {
                         learnNext_s.setEnabled(true);
                         learnPlay_s.setEnabled(true);
                         learnLast_s.setEnabled(true);
+                        changeModeSpinner_s.setEnabled(true);
                     }
                 });
             }
@@ -511,6 +521,7 @@ public class MainActivity extends AppCompatActivity {
                         setupNext.setEnabled(false);
                         setupPlay.setEnabled(false);
                         setupLast.setEnabled(false);
+                        changeModeSpinner.setEnabled(false);
                     }
                 });
                 try {
@@ -524,6 +535,7 @@ public class MainActivity extends AppCompatActivity {
                         setupNext.setEnabled(true);
                         setupPlay.setEnabled(true);
                         setupLast.setEnabled(true);
+                        changeModeSpinner.setEnabled(true);
                     }
                 });
             }
@@ -533,6 +545,7 @@ public class MainActivity extends AppCompatActivity {
                         learnNext.setEnabled(false);
                         learnPlay.setEnabled(false);
                         learnLast.setEnabled(false);
+                        changeModeSpinner.setEnabled(false);
                     }
                 });
                 try {
@@ -545,6 +558,7 @@ public class MainActivity extends AppCompatActivity {
                         learnNext.setEnabled(true);
                         learnPlay.setEnabled(true);
                         learnLast.setEnabled(true);
+                        changeModeSpinner.setEnabled(true);
                     }
                 });
             }
@@ -577,6 +591,8 @@ public class MainActivity extends AppCompatActivity {
         learnLast_s = (Button)findViewById(R.id.learn_last_s);
         learnPlay_s = (Button)findViewById(R.id.learn_play_s);
         learnNext_s = (Button)findViewById(R.id.learn_next_s);
+        learnSwitch_s = (Switch)findViewById(R.id.learn_switch_s);
+        learnSwitchTip_s = (TextView)findViewById(R.id.learn_switch_tip_s);
 
         testTip_s = (TextView)findViewById(R.id.test_tip_s);
         testResult_s = (TextView)findViewById(R.id.test_result_s);
@@ -588,12 +604,30 @@ public class MainActivity extends AppCompatActivity {
         learnLast_s.setVisibility(View.GONE);
         learnPlay_s.setVisibility(View.GONE);
         learnNext_s.setVisibility(View.GONE);
+        learnSwitch_s.setVisibility(View.GONE);
+        learnSwitchTip_s.setVisibility(View.GONE);
         testTip_s.setVisibility(View.GONE);
         testResult_s.setVisibility(View.GONE);
         testStart_s.setVisibility(View.GONE);
 
         initialQSequential();
         initialQGesture();
+
+        learnSwitch_s.setChecked(true);
+        learnSwitch_s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                //控制开关字体颜色
+                if (b) {
+                    System.out.println("heeeere this is b");
+                    showTipFlash_s = true;
+                }else {
+                    System.out.println("heeeere this is !!!!!b");
+                    showTipFlash_s = false;
+                }
+            }
+        });
+
 
         list_s.add("初始设置");
         list_s.add("学习模式");
@@ -849,6 +883,8 @@ public class MainActivity extends AppCompatActivity {
                 learnLast_s = (Button)findViewById(R.id.learn_last_s);
                 learnPlay_s = (Button)findViewById(R.id.learn_play_s);
                 learnNext_s = (Button)findViewById(R.id.learn_next_s);
+                learnSwitch_s = (Switch)findViewById(R.id.learn_switch_s);
+                learnSwitchTip_s = (TextView)findViewById(R.id.learn_switch_tip_s);
 
                 testTip_s = (TextView)findViewById(R.id.test_tip_s);
                 testResult_s = (TextView)findViewById(R.id.test_result_s);
@@ -943,6 +979,8 @@ public class MainActivity extends AppCompatActivity {
                 learnLast_s.setVisibility(View.GONE);
                 learnPlay_s.setVisibility(View.GONE);
                 learnNext_s.setVisibility(View.GONE);
+                learnSwitch_s.setVisibility(View.GONE);
+                learnSwitchTip_s.setVisibility(View.GONE);
                 testTip_s.setVisibility(View.GONE);
                 testResult_s.setVisibility(View.GONE);
                 testStart_s.setVisibility(View.GONE);
@@ -991,14 +1029,10 @@ public class MainActivity extends AppCompatActivity {
                             case MotionEvent.ACTION_POINTER_UP:
                                 TouchEvent touch = touchEvent[pointerID];
                                 touch.up(x, y);
-                                switch (page) {
-                                    case VIEW_SEQUENTIAL:
-                                        qtouchs.add(new QTouch((touch.x + touch.downX) / 2, (touch.y + touch.downY) / 2, touch.downTime, touch.currentTime));
-                                        if (n - 1 == 0) {
-                                            idleTimer = new Timer();
-                                            idleTimer.schedule(new IdleTimerTask(), 200);
-                                        }
-                                        break;
+                                qtouchs.add(new QTouch((touch.x + touch.downX) / 2, (touch.y + touch.downY) / 2, touch.downTime, touch.currentTime));
+                                if (n - 1 == 0) {
+                                    idleTimer = new Timer();
+                                    idleTimer.schedule(new IdleTimerTask(), 200);
                                 }
                                 touchEvent[pointerID] = null;
                                 break;
@@ -1122,6 +1156,8 @@ public class MainActivity extends AppCompatActivity {
                 learnLast_s.setVisibility(View.GONE);
                 learnPlay_s.setVisibility(View.GONE);
                 learnNext_s.setVisibility(View.GONE);
+                learnSwitch_s.setVisibility(View.GONE);
+                learnSwitchTip_s.setVisibility(View.GONE);
                 testTip_s.setVisibility(View.GONE);
                 testResult_s.setVisibility(View.GONE);
                 testStart_s.setVisibility(View.GONE);
@@ -1148,16 +1184,22 @@ public class MainActivity extends AppCompatActivity {
                 learnLast_s.setVisibility(View.VISIBLE);
                 learnPlay_s.setVisibility(View.VISIBLE);
                 learnNext_s.setVisibility(View.VISIBLE);
+                learnSwitch_s.setVisibility(View.VISIBLE);
+                learnSwitchTip_s.setVisibility(View.VISIBLE);
                 testTip_s.setVisibility(View.GONE);
                 testResult_s.setVisibility(View.GONE);
                 testStart_s.setVisibility(View.GONE);
 
-                SetEnableRunnable runnableLearn = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
-                Thread threadLearn = new Thread(runnableLearn);
-                threadLearn.start();
-
                 drawView.drawNothing();
-                drawFlash.drawTapFlash(learnNumber);
+                if(showTipFlash_s){
+                    drawFlash.drawTapFlash(learnNumber);
+                    SetEnableRunnable runnableLearn = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+                    Thread threadLearn = new Thread(runnableLearn);
+                    threadLearn.start();
+                }
+                else {
+                    drawFlash.drawNothing();
+                }
 
                 modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
                 learnFunction_s.setText(qSequentials[learnNumber].tapName);
@@ -1173,6 +1215,8 @@ public class MainActivity extends AppCompatActivity {
                 learnLast_s.setVisibility(View.GONE);
                 learnPlay_s.setVisibility(View.GONE);
                 learnNext_s.setVisibility(View.GONE);
+                learnSwitch_s.setVisibility(View.GONE);
+                learnSwitchTip_s.setVisibility(View.GONE);
                 testTip_s.setVisibility(View.VISIBLE);
                 testResult_s.setVisibility(View.VISIBLE);
                 testStart_s.setVisibility(View.VISIBLE);
@@ -1209,11 +1253,17 @@ public class MainActivity extends AppCompatActivity {
             if(learnNumber >= seqSize){
                 learnNumber = 0;
             }
-            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
-            Thread thread = new Thread(runnable);
-            thread.start();
+
             drawFlash.drawNothing();
-            drawFlash.drawTapFlash(learnNumber);
+            if(showTipFlash_s){
+                drawFlash.drawTapFlash(learnNumber);
+                SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+                Thread thread = new Thread(runnable);
+                thread.start();
+            }
+            else {
+                drawFlash.drawNothing();
+            }
 
             modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
             learnFunction_s.setText(qSequentials[learnNumber].tapName);
@@ -1231,11 +1281,17 @@ public class MainActivity extends AppCompatActivity {
             drawFlash.drawTapFlash(setupNumber);
         }
         else if(state_s == SEQUENTIAL_LEARN){
-            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
-            Thread thread = new Thread(runnable);
-            thread.start();
+
             drawFlash.drawNothing();
-            drawFlash.drawTapFlash(learnNumber);
+            if(showTipFlash_s){
+                drawFlash.drawTapFlash(learnNumber);
+                SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+                Thread thread = new Thread(runnable);
+                thread.start();
+            }
+            else {
+                drawFlash.drawNothing();
+            }
         }
     }
 
@@ -1263,11 +1319,17 @@ public class MainActivity extends AppCompatActivity {
             if(learnNumber < 0){
                 learnNumber = seqSize - 1;
             }
-            SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
-            Thread thread = new Thread(runnable);
-            thread.start();
+
             drawFlash.drawNothing();
-            drawFlash.drawTapFlash(learnNumber);
+            if(showTipFlash_s){
+                drawFlash.drawTapFlash(learnNumber);
+                SetEnableRunnable runnable = new SetEnableRunnable(SEQUENTIAL_LEARN, qSequentials[learnNumber].runTime);
+                Thread thread = new Thread(runnable);
+                thread.start();
+            }
+            else {
+                drawFlash.drawNothing();
+            }
 
             modeTip_s.setText("请巩固学习第"+ learnNumber + "个功能");
             learnFunction_s.setText(qSequentials[learnNumber].tapName);
@@ -1290,11 +1352,6 @@ public class MainActivity extends AppCompatActivity {
                         p.order = qtouchs.get(i).order;
                         p.index = qtouchs.get(i).index;
                         qtouchs_copy.add(p);
-                    }
-
-                    if(state_s == SEQUENTIAL_SETUP && (setupNumber == 0 || setupNumber == 1)){
-                        System.out.println("heeeere setupnumber:"+setupNumber+" pow:" + (Math.pow(qtouchs_copy.get(0).x - qtouchs_copy.get(0+1).x, 2)
-                                + Math.pow(qtouchs_copy.get(0).y - qtouchs_copy.get(0+1).y, 2)));
                     }
                     if(page == VIEW_SEQUENTIAL && state_s == SEQUENTIAL_TEST && isTesting_s){
                         String a = CompareCandi_s();
